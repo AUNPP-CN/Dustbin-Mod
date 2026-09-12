@@ -7,7 +7,7 @@
 
 首个正式版本，功能集已稳定。 / First stable release; the feature set is frozen.
 
-![垃圾桶的关闭与打开状态 / Closed and open states](https://raw.githubusercontent.com/MinCiallo/Dustbin-Mod/Fabric/docs/preview.png)
+![垃圾桶的关闭与打开状态 / Closed and open states](https://raw.githubusercontent.com/AUNPP-CN/Dustbin-Mod/Fabric/docs/preview.png)
 
 *左：关盖 · 右：开盖（95°）。由方块模型离线渲染。*
 *Left: closed · Right: open at 95°. Rendered offline from the block model.*
@@ -122,17 +122,17 @@ Please verify the checksum after downloading.
 
 ```
 文件 / File : dustbin-fabric-1.0.0.jar
-大小 / Size : 153,680 bytes
-MD5         : 35b352e4caa3cc4ba93057f6ef892879
-SHA-256     : ac46b4ba2c87c1112e3caca13c5a35c091fe22c16a7e7258cd65e845995b646d
+大小 / Size : 153,691 bytes
+MD5         : eefdafef95366e221e7619344870b701
+SHA-256     : 14a4d63e4fce2b69831eae176f725f25f87a60275ebe329c57239968828ad24c
 ```
 
 ---
 
 ## 许可证 / License
 
-[CC BY-NC-SA 4.0](https://github.com/MinCiallo/Dustbin-Mod/blob/Fabric/LICENSE) —— 允许使用、修改与再分发，但**必须署名**、**不得用于商业用途**，且衍生作品需以相同协议共享。
+[CC BY-NC-SA 4.0](https://github.com/AUNPP-CN/Dustbin-Mod/blob/Fabric/LICENSE) —— 允许使用、修改与再分发，但**必须署名**、**不得用于商业用途**，且衍生作品需以相同协议共享。
 
-[CC BY-NC-SA 4.0](https://github.com/MinCiallo/Dustbin-Mod/blob/Fabric/LICENSE) — use, adaptation and redistribution are permitted, provided you **give attribution**, **do not use it commercially**, and **share derivatives under the same license**.
+[CC BY-NC-SA 4.0](https://github.com/AUNPP-CN/Dustbin-Mod/blob/Fabric/LICENSE) — use, adaptation and redistribution are permitted, provided you **give attribution**, **do not use it commercially**, and **share derivatives under the same license**.
 
 欢迎提交 Issue 与 Pull Request。 / Issues and pull requests are welcome.
