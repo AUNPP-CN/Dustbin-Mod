@@ -3,6 +3,7 @@ package com.minciallo.dustbin.client.render;
 import com.minciallo.dustbin.MinCialloDustbin;
 import com.minciallo.dustbin.block.DustbinBlock;
 import com.minciallo.dustbin.block.DustbinBlockEntity;
+import com.minciallo.dustbin.storage.DustbinKind;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -42,33 +43,30 @@ import java.util.Map;
  */
 public class DustbinBlockEntityRenderer implements BlockEntityRenderer<DustbinBlockEntity, DustbinRenderState> {
 	/**
-	 * Lid textures. The lid is drawn twice, by two different mechanisms, and the two
-	 * mechanisms impose <em>different</em> rules on the same files:
+	 * 盖子贴图缓存，按「桶的种类 + 部位」查表。
 	 *
-	 * <ul>
-	 * <li><b>Here (block entity renderer)</b> — {@link RenderTypes#entityCutout} hands the
-	 * identifier straight to {@code TextureManager.getTexture}, with no prefixing or
-	 * suffixing. So the path must be <em>full</em>: a {@code textures/} prefix and a
-	 * {@code .png} suffix are both required. A short path such as
-	 * {@code block/dustbin_lid_top} resolves to nothing and renders as the
-	 * missing-texture checkerboard.
-	 * <li><b>The block model</b> ({@code models/block/dustbin.json}), used for the item
-	 * icon — model textures are stitched into the {@code minecraft:blocks} atlas, whose
-	 * only directory source is {@code textures/block}. A file anywhere else (for example
-	 * {@code textures/entity/...}) is never stitched, so the model cannot resolve it and
-	 * the item form renders as the checkerboard too.
-	 * </ul>
+	 * <p><b>每个种类的桶都有自己的一套盖子美术</b>，路径由注册名后缀拼出：
+	 * {@code dustbin_lid_top} / {@code kitchen_dustbin_lid_top} /
+	 * {@code tool_dustbin_lid_top} / {@code mineral_dustbin_lid_top}，侧面与提手同理。
+	 * 因此这里不能再用单个常量 —— 早期版本把 {@code dustbin_lid_*} 写死，
+	 * 结果四种桶在世界里长得一模一样，只有物品栏图标不同。
 	 *
-	 * <p>Placing the files under {@code textures/block/} is therefore load-bearing in both
-	 * worlds: it satisfies the atlas, and this full path satisfies the direct binding.
-	 * Moving them out of {@code textures/block/} breaks the item icon even though the
-	 * in-world lid keeps working.
+	 * <p>识别符必须是<b>全路径</b>：{@link RenderTypes#entityCutout} 会把 identifier
+	 * 直接交给 {@code TextureManager.getTexture}，不做任何前后缀补全。短路径
+	 * （如 {@code block/dustbin_lid_top}）解析不到文件，会渲染成紫黑格子的 missing texture。
+	 *
+	 * <p>而同一个文件还要被方块模型（{@code models/block/dustbin.json}，用于物品栏图标）
+	 * 消费：模型贴图会被拼进 {@code minecraft:blocks} 图集，该图集唯一的目录来源就是
+	 * {@code textures/block/}。所以把文件放在这个目录是<b>两边都成立的前提</b> ——
+	 * 图集能收录，这里的全路径也能命中。挪出去会让物品栏图标变紫黑，而世界里的盖子照旧。
 	 */
-	private static final Identifier LID_TOP = MinCialloDustbin.id("textures/block/dustbin_lid_top.png");
-	/** Sides and underside of the lid. */
-	private static final Identifier LID_SIDE = MinCialloDustbin.id("textures/block/dustbin_lid_side.png");
-	/** The ribbed lift tab sitting on top of the lid. */
-	private static final Identifier LID_HANDLE = MinCialloDustbin.id("textures/block/dustbin_lid_handle.png");
+	private static final Map<String, Identifier> LID_CACHE = new HashMap<>();
+
+	/** 取某个种类、某个部位（{@code lid_top} / {@code lid_side} / {@code lid_handle}）的盖子贴图。 */
+	private static Identifier lidTexture(DustbinKind kind, String part) {
+		return LID_CACHE.computeIfAbsent(kind.path() + '/' + part,
+				key -> MinCialloDustbin.id("textures/block/" + kind.path() + '_' + part + ".png"));
+	}
 
 	/** How far the lid swings open, in degrees. */
 	private static final float MAX_OPEN_ANGLE = 95.0f;
@@ -114,6 +112,13 @@ public class DustbinBlockEntityRenderer implements BlockEntityRenderer<DustbinBl
 
 		BlockPos pos = blockEntity.getBlockPos();
 		state.facing = blockEntity.getBlockState().getValue(DustbinBlock.FACING);
+
+		// 四种桶各有自己的一套盖子美术，按种类解析（结果在 LID_CACHE 里缓存）。
+		DustbinKind kind = blockEntity.getKind();
+		state.lidTop = lidTexture(kind, "lid_top");
+		state.lidSide = lidTexture(kind, "lid_side");
+		state.lidHandle = lidTexture(kind, "lid_handle");
+
 		float target = blockEntity.getBlockState().getValue(DustbinBlock.OPEN) ? 1.0f : 0.0f;
 
 		long now = Util.getMillis();
@@ -165,8 +170,8 @@ public class DustbinBlockEntityRenderer implements BlockEntityRenderer<DustbinBl
 		poseStack.mulPose(new Quaternionf().rotationX((float) Math.toRadians(-MAX_OPEN_ANGLE * state.openness)));
 		poseStack.translate(0.0f, -LID_Y0, -LID_Z0);
 
-		emitBox(poseStack, collector, LID_X0, LID_Y0, LID_Z0, LID_X1, LID_Y1, LID_Z1, LID_TOP, LID_SIDE, LID_SIDE, light, overlay);
-		emitBox(poseStack, collector, TAB_X0, TAB_Y0, TAB_Z0, TAB_X1, TAB_Y1, TAB_Z1, LID_HANDLE, LID_HANDLE, LID_HANDLE, light, overlay);
+		emitBox(poseStack, collector, LID_X0, LID_Y0, LID_Z0, LID_X1, LID_Y1, LID_Z1, state.lidTop, state.lidSide, state.lidSide, light, overlay);
+		emitBox(poseStack, collector, TAB_X0, TAB_Y0, TAB_Z0, TAB_X1, TAB_Y1, TAB_Z1, state.lidHandle, state.lidHandle, state.lidHandle, light, overlay);
 
 		poseStack.popPose();
 	}
