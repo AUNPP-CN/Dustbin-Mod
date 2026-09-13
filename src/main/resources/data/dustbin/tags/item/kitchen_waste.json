@@ -11,6 +11,11 @@
     "minecraft:rotten_flesh",
     "minecraft:spider_eye",
     "minecraft:poisonous_potato",
-    "minecraft:beetroot"
+    "minecraft:beetroot",
+    "minecraft:cake",
+    {
+      "id": "#c:foods/edible_when_placed",
+      "required": false
+    }
   ]
 }

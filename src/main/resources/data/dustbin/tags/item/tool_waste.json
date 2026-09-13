@@ -10,6 +10,9 @@
     "#minecraft:chest_armor",
     "#minecraft:leg_armor",
     "#minecraft:foot_armor",
-    "#c:tools/knife"
+    {
+      "id": "#c:tools/knife",
+      "required": false
+    }
   ]
 }
