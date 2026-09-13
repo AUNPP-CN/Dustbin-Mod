@@ -19,13 +19,13 @@ import java.util.Map;
  * 全局的、按维度共享的垃圾桶存储。
  *
  * <p>1.1.0 起改为<b>每种垃圾桶各持有一份 54 格库存</b>
- * （{@link DustbinKind#NORMAL} / {@link DustbinKind#KITCHEN} / {@link DustbinKind#TOOL}），
- * 进桶时间仍是一个全局值。
+ * （{@link DustbinKind#NORMAL} / {@link DustbinKind#KITCHEN} / {@link DustbinKind#TOOL}
+ * / {@link DustbinKind#MINERAL}），进桶时间仍是一个全局值。
  *
  * <p><b>存档兼容性（关键）</b>：序列化字段 {@code items} 继续表示<b>普通垃圾桶</b>的内容，
- * 1.1.0 只是新增了 {@code kitchen_items} 与 {@code tool_items} 两个<b>可选</b>字段。
- * 因此用 1.0.0 存的档升到 1.1.0 后，普通桶里的东西一个都不会丢 —— 读取时缺失的新字段
- * 会补成空列表。
+ * 1.1.0 只是新增了 {@code kitchen_items} / {@code tool_items} / {@code mineral_items}
+ * 三个<b>可选</b>字段。因此用 1.0.0 存的档升到 1.1.0 后，普通桶里的东西一个都不会丢 ——
+ * 读取时缺失的新字段会补成空列表。
  */
 public class DustbinStorage extends SavedData {
 	public static final String NAME = "dustbin_storage";
@@ -48,7 +48,9 @@ public class DustbinStorage extends SavedData {
 			ItemStack.OPTIONAL_CODEC.listOf().optionalFieldOf("kitchen_items", List.<ItemStack>of())
 					.forGetter(storage -> itemsOf(storage, DustbinKind.KITCHEN)),
 			ItemStack.OPTIONAL_CODEC.listOf().optionalFieldOf("tool_items", List.<ItemStack>of())
-					.forGetter(storage -> itemsOf(storage, DustbinKind.TOOL))
+					.forGetter(storage -> itemsOf(storage, DustbinKind.TOOL)),
+			ItemStack.OPTIONAL_CODEC.listOf().optionalFieldOf("mineral_items", List.<ItemStack>of())
+					.forGetter(storage -> itemsOf(storage, DustbinKind.MINERAL))
 	).apply(instance, DustbinStorage::fromData));
 
 	public static final SavedDataType<DustbinStorage> TYPE = new SavedDataType<>(
@@ -62,11 +64,12 @@ public class DustbinStorage extends SavedData {
 	}
 
 	private static DustbinStorage fromData(List<ItemStack> items, int collectionTicks,
-			List<ItemStack> kitchenItems, List<ItemStack> toolItems) {
+			List<ItemStack> kitchenItems, List<ItemStack> toolItems, List<ItemStack> mineralItems) {
 		DustbinStorage storage = new DustbinStorage();
 		fill(storage.getInventory(DustbinKind.NORMAL), items);
 		fill(storage.getInventory(DustbinKind.KITCHEN), kitchenItems);
 		fill(storage.getInventory(DustbinKind.TOOL), toolItems);
+		fill(storage.getInventory(DustbinKind.MINERAL), mineralItems);
 		storage.collectionTicks = collectionTicks;
 		return storage;
 	}
@@ -141,7 +144,7 @@ public class DustbinStorage extends SavedData {
 		return false;
 	}
 
-	/** 清空全部三种桶，返回移除的组数。 */
+	/** 清空全部各类桶，返回移除的组数。 */
 	public int clearAll() {
 		int count = 0;
 		for (DustbinKind kind : DustbinKind.values()) {

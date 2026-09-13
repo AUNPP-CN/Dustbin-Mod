@@ -13,8 +13,17 @@
     "minecraft:poisonous_potato",
     "minecraft:beetroot",
     "minecraft:cake",
+    "#minecraft:horse_food",
     {
       "id": "#c:foods/edible_when_placed",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:horse_feed",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:dog_food",
       "required": false
     }
   ]

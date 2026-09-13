@@ -7,13 +7,17 @@
   "block.dustbin.kitchen_dustbin": "Kitchen Waste Bin",
   "item.dustbin.kitchen_dustbin": "Kitchen Waste Bin",
   "container.dustbin.kitchen_dustbin": "Kitchen Waste Bin",
-  "block.dustbin.tool_dustbin": "Tool Bin",
-  "item.dustbin.tool_dustbin": "Tool Bin",
-  "container.dustbin.tool_dustbin": "Tool Bin",
+  "block.dustbin.tool_dustbin": "Equipment Bin",
+  "item.dustbin.tool_dustbin": "Equipment Bin",
+  "container.dustbin.tool_dustbin": "Equipment Bin",
+  "block.dustbin.mineral_dustbin": "Mineral Bin",
+  "item.dustbin.mineral_dustbin": "Mineral Bin",
+  "container.dustbin.mineral_dustbin": "Mineral Bin",
   "commands.dustbin.cleared_kind": "Cleared %2$s item stacks from the %1$s.",
   "itemGroup.dustbin.bins": "More Bins",
   "advancements.dustbin.recycle.title": "Recycle!",
   "advancements.dustbin.recycle.description": "Craft your first bin",
   "tag.item.dustbin.kitchen_waste": "Kitchen Waste",
-  "tag.item.dustbin.tool_waste": "Tool Waste"
+  "tag.item.dustbin.tool_waste": "Equipment Waste",
+  "tag.item.dustbin.mineral_waste": "Mineral Waste"
 }

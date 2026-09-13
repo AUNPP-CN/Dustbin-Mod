@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "dustbin:mineral_dustbin"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "dustbin:blocks/mineral_dustbin"
+}

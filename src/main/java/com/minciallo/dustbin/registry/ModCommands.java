@@ -43,7 +43,7 @@ public class ModCommands {
 	public static void register() {
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, selection) -> {
 			dispatcher.register(Commands.literal("dustbin")
-					// 不带参数 -> 清空全部三种桶
+					// 不带参数 -> 清空全部各类桶
 					// 带种类     -> 只清那一种
 					.then(Commands.literal("clear")
 							.requires(ModCommands::isAdmin)
@@ -53,8 +53,10 @@ public class ModCommands {
 							.then(Commands.literal("kitchen")
 									.executes(context -> clear(context.getSource(), DustbinKind.KITCHEN)))
 							.then(Commands.literal("tool")
-									.executes(context -> clear(context.getSource(), DustbinKind.TOOL))))
-					// 进桶时间三类共用，语义与 1.0.0 一致
+									.executes(context -> clear(context.getSource(), DustbinKind.TOOL)))
+							.then(Commands.literal("mineral")
+									.executes(context -> clear(context.getSource(), DustbinKind.MINERAL))))
+					// 进桶时间各类共用，语义与 1.0.0 一致
 					.then(Commands.literal("settime")
 							.requires(ModCommands::isAdmin)
 							.then(Commands.argument("minutes", IntegerArgumentType.integer(
@@ -65,7 +67,7 @@ public class ModCommands {
 		});
 	}
 
-	/** @param kind 为 null 时清空全部三种桶 */
+	/** @param kind 为 null 时清空全部桶 */
 	private static int clear(CommandSourceStack source, @Nullable DustbinKind kind) {
 		ServerLevel level = source.getLevel();
 		DustbinStorage storage = DustbinStorage.get(level);

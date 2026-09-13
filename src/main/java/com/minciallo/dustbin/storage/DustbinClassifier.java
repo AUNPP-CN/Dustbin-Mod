@@ -11,20 +11,21 @@ import net.minecraft.world.item.ItemStack;
 /**
  * 掉落物 → 垃圾桶种类的判定。
  *
- * <p><b>判定顺序固定为 工具 → 厨余 → 普通</b>，第一个匹配上的生效，
+ * <p><b>判定顺序固定为 装备 → 厨余 → 矿物 → 普通</b>，第一个匹配上的生效，
  * 因此一个物品永远不会同时进入两个桶。
  *
- * <p>两套规则都以<b>数据包标签</b>为准（而非写死在代码里），
+ * <p>三套规则都以<b>数据包标签</b>为准（而非写死在代码里），
  * 这样整合包作者或玩家可以直接改标签来调整分类，不需要重新编译模组：
  * <ul>
  *   <li>{@code #dustbin:tool_waste} —— 默认引用原生标签：
  *       镐/锹/斧/锄/剑、矛、四件套装备，以及通用刀具 {@code #c:tools/knife}</li>
  *   <li>{@code #dustbin:kitchen_waste} —— 手工登记的「不是食物但也算厨余」的物品</li>
+ *   <li>{@code #dustbin:mineral_waste} —— 矿石、原矿、锭、宝石与矿物块</li>
  * </ul>
  */
 public final class DustbinClassifier {
 	/**
-	 * 工具桶的判定标签。
+	 * 装备桶的判定标签。
 	 *
 	 * <p>默认值在 {@code data/dustbin/tags/item/tool_waste.json}，内容是原生的
 	 * {@code #minecraft:pickaxes} / {@code #minecraft:shovels} / {@code #minecraft:axes}
@@ -34,7 +35,7 @@ public final class DustbinClassifier {
 	 * 以及通用刀具标签 {@code #c:tools/knife}（农夫乐事的厨刀等模组刀具会随它进来）。
 	 *
 	 * <p>刻意<b>不</b>用 {@code minecraft:tool} 数据组件判定：那个组件还覆盖剪子、刷子、
-	 * 打火石等物品，会把它们一并收进工具桶。用标签则行为完全可预测。
+	 * 打火石等物品，会把它们一并收进装备桶。用标签则行为完全可预测。
 	 */
 	public static final TagKey<Item> TOOL_WASTE =
 			TagKey.create(Registries.ITEM, MinCialloDustbin.id("tool_waste"));
@@ -42,6 +43,20 @@ public final class DustbinClassifier {
 	/** 厨余桶的补充标签，用于「不是食物但同样算厨余」的物品（骨粉、种子等）。 */
 	public static final TagKey<Item> KITCHEN_WASTE =
 			TagKey.create(Registries.ITEM, MinCialloDustbin.id("kitchen_waste"));
+
+	/**
+	 * 矿物桶的判定标签。
+	 *
+	 * <p>默认值在 {@code data/dustbin/tags/item/mineral_waste.json}：原生的八种矿石物品标签
+	 * （煤/铜/铁/金/钻石/绿宝石/青金石/红石）、{@code #minecraft:coals}、
+	 * {@code #minecraft:metal_nuggets}、{@code #minecraft:copper}（含氧化与涂蜡变种），
+	 * 加上逐个登记的锭、原矿、宝石与矿物块。
+	 *
+	 * <p>刻意<b>不</b>收加工品（铜门铜台阶、红石灯、石英楼梯等建材）—— 只有「从地里挖到的、
+	 * 或直接由这些材料铸成的」才算矿物。
+	 */
+	public static final TagKey<Item> MINERAL_WASTE =
+			TagKey.create(Registries.ITEM, MinCialloDustbin.id("mineral_waste"));
 
 	private DustbinClassifier() {
 	}
@@ -56,6 +71,9 @@ public final class DustbinClassifier {
 		}
 		if (isKitchenWaste(stack)) {
 			return DustbinKind.KITCHEN;
+		}
+		if (isMineral(stack)) {
+			return DustbinKind.MINERAL;
 		}
 		return DustbinKind.NORMAL;
 	}
@@ -73,5 +91,10 @@ public final class DustbinClassifier {
 	 */
 	private static boolean isKitchenWaste(ItemStack stack) {
 		return stack.is(KITCHEN_WASTE) || stack.has(DataComponents.FOOD);
+	}
+
+	/** 矿物 = 标签里登记过的矿石 / 原矿 / 锭 / 宝石 / 矿物块。 */
+	private static boolean isMineral(ItemStack stack) {
+		return stack.is(MINERAL_WASTE);
 	}
 }

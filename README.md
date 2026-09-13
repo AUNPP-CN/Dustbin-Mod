@@ -13,9 +13,9 @@
 > 掉落物不再无声消失 —— 它们会按类别滑进垃圾桶。  
 > Dropped items no longer vanish silently — they sort themselves into a bin.
 
-一个 **Minecraft 26.2** 的模组：原版里掉落物 5 分钟后直接消失；这个模组把它改成：**掉落物在设定时间后自动分类进桶**，你随时可以把东西捡回来。桶一共三种 —— **厨余 / 工具 / 其他**，各收各的。
+一个 **Minecraft 26.2** 的模组：原版里掉落物 5 分钟后直接消失；这个模组把它改成：**掉落物在设定时间后自动分类进桶**，你随时可以把东西捡回来。桶一共四种 —— **厨余 / 装备 / 矿物 / 其他**，各收各的。
 
-A mod for **Minecraft 26.2**: in vanilla, dropped items despawn after 5 minutes. This mod changes that — items are **sorted into a bin** after a configurable delay, and you can take them back out whenever you like. There are three bins — **kitchen waste**, **tools**, and everything else.
+A mod for **Minecraft 26.2**: in vanilla, dropped items despawn after 5 minutes. This mod changes that — items are **sorted into a bin** after a configurable delay, and you can take them back out whenever you like. There are four bins — **kitchen waste**, **equipment**, **minerals**, and everything else.
 
 ![垃圾桶的关闭与打开状态（离线渲染）/ Closed and open states (offline render)](docs/preview.png)
 
@@ -48,29 +48,34 @@ The mod id is `dustbin` and **stays the same across loaders**; only the artifact
 - 对应的垃圾桶已满时（54 格全占、且没有同类物品所在格），物品**回落到原版行为**正常消失 —— 它是兜底，不是无限仓库。  
   When the bin it belongs to is full (all 54 slots taken, with no slot holding the same item), items **fall back to vanilla despawn** — the bin is a safety net, not unlimited storage.
 
-### 三类垃圾桶 / Three kinds of bin
+### 四类垃圾桶 / Four kinds of bin
 
 | 垃圾桶 Bin | 收什么 What it collects | 合成时的中心材料 Core item |
 | --- | --- | --- |
-| **其他垃圾桶 / Other Bin** | 兜底 —— 前两类都不匹配的物品。Anything left over. | 箱子 / Chest |
+| **其他垃圾桶 / Other Bin** | 兜底 —— 其它三类都不匹配的物品。Anything left over. | 箱子 / Chest |
 | **厨余垃圾桶 / Kitchen Bin** | 食物与厨余。Food and kitchen scraps. | 骨头 / Bone |
-| **工具垃圾桶 / Tool Bin** | 工具、武器、装备。Tools, weapons and armour. | 铁镐 / Iron Pickaxe |
+| **装备垃圾桶 / Equipment Bin** | 工具、武器、护甲。Tools, weapons and armour. | 铁镐 / Iron Pickaxe |
+| **矿物垃圾桶 / Mineral Bin** | 矿石、原矿、锭、宝石、矿物块。Ores, raw materials, ingots, gems and mineral blocks. | 铁块 / Iron Block |
 
-判定顺序是 **工具 → 厨余 → 其他**，第一个匹配的生效（所以一把铁镐进工具桶，而不是其他桶）。
+判定顺序是 **装备 → 厨余 → 矿物 → 其他**，第一个匹配的生效（所以一把铁镐进装备桶、铁锭进矿物桶，都不会落到其他桶）。
 
-The order is **tools → kitchen → everything else**, and the first match wins (an iron pickaxe goes to the Tool Bin, not the Other Bin).
+The order is **equipment → kitchen → minerals → everything else**, and the first match wins (so an iron pickaxe goes to the Equipment Bin and an iron ingot to the Mineral Bin — neither lands in the Other Bin).
 
-**厨余**由三部分构成：一份固定的物品标签（骨头、骨粉、各类种子、腐肉、蜘蛛眼、毒马铃薯、甜菜根、蛋糕）；**任何带食物组件的物品**（模组食物因此能自动识别，无需逐个适配）；以及可选的跨模组标签 `#c:foods/edible_when_placed`，覆盖「放下才能吃」的食物方块，例如农夫乐事的寿司拼盘与各类整块派。
+**厨余**由四部分构成：一份固定的物品标签（骨头、骨粉、各类种子、腐肉、蜘蛛眼、毒马铃薯、甜菜根、蛋糕）；**任何带食物组件的物品**（模组食物因此能自动识别，无需逐个适配）；原生的「马能吃的东西」标签 `#minecraft:horse_food`（小麦、糖、干草块等）；以及可选的跨模组条目 —— `#c:foods/edible_when_placed`（「放下才能吃」的食物方块，如寿司拼盘与各类整块派）与农夫乐事的动物饲料（**马食**、狗粮）。
 
-**Kitchen waste** comes from three sources: a fixed item tag (bone, bone meal, seeds, rotten flesh, spider eye, poisonous potato, beetroot, cake); **any item carrying the food component** — so modded food is picked up automatically with no per-mod work; and the optional cross-mod tag `#c:foods/edible_when_placed`, which covers food blocks you have to place down before eating (Farmer's Delight's sushi platter and whole pies, for instance).
+**Kitchen waste** comes from four sources: a fixed item tag (bone, bone meal, seeds, rotten flesh, spider eye, poisonous potato, beetroot, cake); **any item carrying the food component** — so modded food is picked up automatically with no per-mod work; the vanilla `#minecraft:horse_food` tag (wheat, sugar, hay blocks, …); and optional cross-mod entries — `#c:foods/edible_when_placed`, which covers food blocks you have to place down before eating (Farmer's Delight's sushi platter and whole pies), plus Farmer's Delight's animal feed (**horse feed** and dog food).
 
-**工具**取自 `#minecraft:` 的镐、锹、斧、锄、剑、矛，以及四种护甲标签（头盔、胸甲、护腿、靴子）；可选的 `#c:tools/knife` 让各类厨刀一并归入工具桶。剪子、打火石、刷子、钓鱼竿**不算**工具，仍进其他垃圾桶。
+**装备**取自 `#minecraft:` 的镐、锹、斧、锄、剑、矛，以及四种护甲标签（头盔、胸甲、护腿、靴子）；可选的 `#c:tools/knife` 让各类厨刀一并归入装备桶。剪子、打火石、刷子、钓鱼竿**不算**装备，仍进其他垃圾桶。
 
-**Tools** come from the `#minecraft:` tags for pickaxes, shovels, axes, hoes, swords, spears and the four armour slots (helmet, chestplate, leggings, boots). The optional `#c:tools/knife` tag pulls in knives from various mods. Shears, flint and steel, brushes and fishing rods are **not** treated as tools — they go to the Other Bin.
+**Equipment** comes from the `#minecraft:` tags for pickaxes, shovels, axes, hoes, swords, spears and the four armour slots (helmet, chestplate, leggings, boots). The optional `#c:tools/knife` tag pulls in knives from various mods. Shears, flint and steel, brushes and fishing rods are **not** treated as equipment — they go to the Other Bin.
 
-上述两条跨模组标签都是**可选引用**（`required: false`），所以**装或不装那些模组都不会导致标签加载失败**。
+**矿物**收的是「从地里挖到的，或直接由这些材料铸成的」：八种矿石（煤、铜、铁、金、钻石、绿宝石、青金石、红石）、下界石英矿石、原矿与粗矿块、煤炭与木炭、金属粒、铜块（含氧化与涂蜡变种）、各类锭（铁 / 金 / 铜 / 下界合金）、下界合金碎片、钻石、绿宝石、青金石、红石、下界石英、紫水晶碎片、远古残骸，以及矿物块。**不收加工品** —— 铜门、铜台阶、红石灯、石英楼梯这类建材仍进其他垃圾桶。
 
-Both cross-mod tags are **optional** references (`required: false`), so they cannot break tag loading whether or not those mods are present.
+**Minerals** covers what you dig out of the ground, or what is cast directly from it: the eight ore types (coal, copper, iron, gold, diamond, emerald, lapis, redstone), nether quartz ore, raw ores and raw ore blocks, coal and charcoal, metal nuggets, copper blocks (including the oxidised and waxed variants), every ingot (iron / gold / copper / netherite), netherite scrap, diamond, emerald, lapis lazuli, redstone, nether quartz, amethyst shards and ancient debris, plus the mineral blocks. **Crafted goods are excluded** — copper doors, copper stairs, redstone lamps and quartz stairs stay in the Other Bin.
+
+上述跨模组引用全部标了 `required: false`（可选），所以**装或不装那些模组都不会导致标签加载失败**。
+
+Every cross-mod reference is marked `required: false`, so they cannot break tag loading whether or not those mods are present.
 
 分类规则全部写在数据包标签里，可以直接改标签、或用数据包覆盖，**不需要重新编译模组**。
 
@@ -113,9 +118,9 @@ Needs a **stone pickaxe or better** — a wooden pickaxe yields nothing. Hardnes
 
 | 指令 Command | 作用 Description |
 | --- | --- |
-| `/dustbin clear` | 清空**全部三个桶**，反馈清掉的物品组数。Empty all three bins; reports how many stacks were cleared. |
-| `/dustbin clear <normal\|kitchen\|tool>` | 只清空指定的一种桶。Empty just the one bin. |
-| `/dustbin settime <minutes>` | 设置收集阈值，范围 1 ~ 1440 分钟；三个桶**共用一个值**。Set the collection threshold (1–1440 minutes), shared by all three bins. |
+| `/dustbin clear` | 清空**全部桶**，反馈清掉的物品组数。Empty every bin; reports how many stacks were cleared. |
+| `/dustbin clear <normal\|kitchen\|tool\|mineral>` | 只清空指定的一种桶。Empty just the one bin. |
+| `/dustbin settime <minutes>` | 设置收集阈值，范围 1 ~ 1440 分钟；所有桶**共用一个值**。Set the collection threshold (1–1440 minutes), shared by all bins. |
 
 权限：单人世界的房主可直接使用；多人服务器需要管理员权限。
 
@@ -123,9 +128,9 @@ Permissions: singleplayer hosts can use them directly; multiplayer servers requi
 
 ### 创造模式物品栏 / Creative tab
 
-创造模式背包里有一个专属页签「**更多的垃圾桶 / More Bins**」，三个桶都放在里面。
+创造模式背包里有一个专属页签「**更多的垃圾桶 / More Bins**」，所有桶都放在里面。
 
-Creative mode has a dedicated tab, **More Bins**, holding all three bins.
+Creative mode has a dedicated tab, **More Bins**, holding every bin.
 
 ### 成就 / Advancement
 
@@ -137,9 +142,9 @@ Crafting **any** bin for the first time unlocks the advancement **Recycle!**
 
 ## 合成 / Crafting
 
-三个桶的摆法完全一样 —— 8 个铁锭围住 1 个中心材料，**只有中心材料不同**。
+四个桶的摆法完全一样 —— 8 个铁锭围住 1 个中心材料，**只有中心材料不同**。
 
-All three bins share the same shape — 8 iron ingots around one core item — and **only the core differs**:
+All four bins share the same shape — 8 iron ingots around one core item — and **only the core differs**:
 
 ```
 I I I
@@ -151,7 +156,8 @@ I I I
 | --- | --- |
 | 其他垃圾桶 / Other Bin | 箱子 / Chest |
 | 厨余垃圾桶 / Kitchen Bin | 骨头 / Bone |
-| 工具垃圾桶 / Tool Bin | 铁镐 / Iron Pickaxe |
+| 装备垃圾桶 / Equipment Bin | 铁镐 / Iron Pickaxe |
+| 矿物垃圾桶 / Mineral Bin | 铁块 / Iron Block |
 
 `I` = 铁锭 / Iron Ingot
 

@@ -18,13 +18,20 @@
       "conditions": {
         "recipe_id": "dustbin:tool_dustbin"
       }
+    },
+    "craft_mineral_dustbin": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "dustbin:mineral_dustbin"
+      }
     }
   },
   "requirements": [
     [
       "craft_dustbin",
       "craft_kitchen_dustbin",
-      "craft_tool_dustbin"
+      "craft_tool_dustbin",
+      "craft_mineral_dustbin"
     ]
   ],
   "display": {

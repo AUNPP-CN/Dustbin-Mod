@@ -7,13 +7,17 @@
   "block.dustbin.kitchen_dustbin": "厨余垃圾桶",
   "item.dustbin.kitchen_dustbin": "厨余垃圾桶",
   "container.dustbin.kitchen_dustbin": "厨余垃圾桶",
-  "block.dustbin.tool_dustbin": "工具垃圾桶",
-  "item.dustbin.tool_dustbin": "工具垃圾桶",
-  "container.dustbin.tool_dustbin": "工具垃圾桶",
+  "block.dustbin.tool_dustbin": "装备垃圾桶",
+  "item.dustbin.tool_dustbin": "装备垃圾桶",
+  "container.dustbin.tool_dustbin": "装备垃圾桶",
+  "block.dustbin.mineral_dustbin": "矿物垃圾桶",
+  "item.dustbin.mineral_dustbin": "矿物垃圾桶",
+  "container.dustbin.mineral_dustbin": "矿物垃圾桶",
   "commands.dustbin.cleared_kind": "已从%1$s中清空 %2$s 组物品。",
   "itemGroup.dustbin.bins": "更多的垃圾桶",
   "advancements.dustbin.recycle.title": "回收再利用！",
   "advancements.dustbin.recycle.description": "合成你的第一个垃圾桶",
   "tag.item.dustbin.kitchen_waste": "厨余垃圾",
-  "tag.item.dustbin.tool_waste": "工具垃圾"
+  "tag.item.dustbin.tool_waste": "装备垃圾",
+  "tag.item.dustbin.mineral_waste": "矿物垃圾"
 }

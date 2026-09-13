@@ -25,7 +25,7 @@ public class MinCialloDustbin implements ModInitializer {
 		ModMenuTypes.register();
 		ModCommands.register();
 
-		// 三种垃圾桶统一放进本模组自己的「更多的垃圾桶」创造栏，
+		// 各类垃圾桶统一放进本模组自己的「更多的垃圾桶」创造栏，
 		// 而不是散落在原版「建筑方块」栏里。
 		ModCreativeTabs.register();
 

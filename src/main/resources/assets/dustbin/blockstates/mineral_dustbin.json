@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=north,open=false": {
+      "model": "dustbin:block/mineral_dustbin_body",
+      "y": 180
+    },
+    "facing=north,open=true": {
+      "model": "dustbin:block/mineral_dustbin_body",
+      "y": 180
+    },
+    "facing=east,open=false": {
+      "model": "dustbin:block/mineral_dustbin_body",
+      "y": 270
+    },
+    "facing=east,open=true": {
+      "model": "dustbin:block/mineral_dustbin_body",
+      "y": 270
+    },
+    "facing=south,open=false": {
+      "model": "dustbin:block/mineral_dustbin_body"
+    },
+    "facing=south,open=true": {
+      "model": "dustbin:block/mineral_dustbin_body"
+    },
+    "facing=west,open=false": {
+      "model": "dustbin:block/mineral_dustbin_body",
+      "y": 90
+    },
+    "facing=west,open=true": {
+      "model": "dustbin:block/mineral_dustbin_body",
+      "y": 90
+    }
+  }
+}
