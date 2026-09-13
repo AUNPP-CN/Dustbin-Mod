@@ -13,5 +13,7 @@
   "commands.dustbin.cleared_kind": "已从%1$s中清空 %2$s 组物品。",
   "itemGroup.dustbin.bins": "更多的垃圾桶",
   "advancements.dustbin.recycle.title": "回收再利用！",
-  "advancements.dustbin.recycle.description": "合成你的第一个垃圾桶"
+  "advancements.dustbin.recycle.description": "合成你的第一个垃圾桶",
+  "tag.item.dustbin.kitchen_waste": "厨余垃圾",
+  "tag.item.dustbin.tool_waste": "工具垃圾"
 }

@@ -13,5 +13,7 @@
   "commands.dustbin.cleared_kind": "Cleared %2$s item stacks from the %1$s.",
   "itemGroup.dustbin.bins": "More Bins",
   "advancements.dustbin.recycle.title": "Recycle!",
-  "advancements.dustbin.recycle.description": "Craft your first bin"
+  "advancements.dustbin.recycle.description": "Craft your first bin",
+  "tag.item.dustbin.kitchen_waste": "Kitchen Waste",
+  "tag.item.dustbin.tool_waste": "Tool Waste"
 }
