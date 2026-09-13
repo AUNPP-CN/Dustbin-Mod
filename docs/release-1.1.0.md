@@ -36,8 +36,8 @@ Each bin is still a **safety net, not unlimited storage** — once the bin an it
   **Four bins, each with its own domain**: the order is **equipment → kitchen → minerals → everything else**, first match wins.
 - **厨余垃圾桶**：骨头、骨粉、各类种子、腐肉、蜘蛛眼、毒马铃薯、甜菜根、蛋糕，**以及任何带食物组件的物品** —— 所以模组加的食物无需逐个适配就会自动进来。「放下才能吃」的食物方块（寿司拼盘、各类整块派）与动物饲料（**马食**、狗粮）也在其列。
   **Kitchen Bin**: bone, bone meal, seeds, rotten flesh, spider eye, poisonous potato, beetroot, cake, **plus anything carrying the food component** — so modded food is picked up with no per-mod work. Food blocks you must place before eating (sushi platters, whole pies) and animal feed (**horse feed**, dog food) are included too.
-- **装备垃圾桶**（1.0.0 里叫「工具垃圾桶」）：镐、锹、斧、锄、剑、矛与四件套护甲；通用刀具标签让各类厨刀一并归入。剪子、打火石、刷子、钓鱼竿**不算**装备，仍进其他桶。
-  **Equipment Bin** (called the "Tool Bin" in 1.0.0): pickaxes, shovels, axes, hoes, swords, spears and all four armour slots, plus knives from the shared tool tag. Shears, flint and steel, brushes and fishing rods are **not** equipment and stay in the Other Bin.
+- **装备垃圾桶**（1.0.0 里叫「工具垃圾桶」）：镐、锹、斧、锄、剑、矛、**盾牌与三叉戟**，以及四件套护甲；通用刀具标签让各类厨刀一并归入。剪子、打火石、刷子、钓鱼竿**不算**装备，仍进其他桶。
+  **Equipment Bin** (called the "Tool Bin" in 1.0.0): pickaxes, shovels, axes, hoes, swords, spears, **shields and tridents**, plus all four armour slots and knives from the shared tool tag. Shears, flint and steel, brushes and fishing rods are **not** equipment and stay in the Other Bin.
 - **矿物垃圾桶**：八类矿石（煤/铜/铁/金/钻石/绿宝石/青金石/红石）、下界石英矿石、原矿与粗矿块、煤炭与木炭、金属粒、铜块（含氧化与涂蜡变种）、各类锭（铁/金/铜/下界合金）、下界合金碎片、钻石、绿宝石、青金石、红石、下界石英、紫水晶碎片、远古残骸，以及矿物块。**不收加工品** —— 铜门、铜台阶、红石灯、石英楼梯这类建材仍进其他桶。
   **Mineral Bin**: the eight ore types (coal / copper / iron / gold / diamond / emerald / lapis / redstone), nether quartz ore, raw ores and raw ore blocks, coal and charcoal, metal nuggets, copper blocks (including oxidised and waxed variants), every ingot (iron / gold / copper / netherite), netherite scrap, diamond, emerald, lapis lazuli, redstone, nether quartz, amethyst shards, ancient debris and the mineral blocks. **Crafted goods are excluded** — copper doors, copper stairs, redstone lamps and quartz stairs stay in the Other Bin.
 - **专属创造栏「更多的垃圾桶 / More Bins」**：四种桶集中在一处，不再散落在原版「建筑方块」栏。
@@ -82,8 +82,9 @@ I I I
 
 | 指令 Command | 作用 Description |
 | --- | --- |
-| `/dustbin clear` | 清空**全部桶**，反馈清掉的物品组数。Empty every bin; reports how many stacks were cleared. |
-| `/dustbin clear <normal\|kitchen\|tool\|mineral>` | 只清空指定的一种桶。Empty just the one bin. |
+| `/dustbin clear` | 清空**全部四个桶**，并**逐个桶**报告各自清掉了几组。Empty every bin, reporting each bin's own count. |
+| `/dustbin clear all` | 同上，显式写法。The same thing, spelled out. |
+| `/dustbin clear <other\|kitchen\|equipment\|mineral>` | 只清空指定的**那一个**桶。<br>`normal`（= other）与 `tool`（= equipment）是等效别名，两种写法都认。Empty just that one bin; `normal` and `tool` are accepted aliases. |
 | `/dustbin settime <minutes>` | 设置收集阈值，范围 1 ~ 1440 分钟；所有桶**共用一个值**。Set the collection threshold (1–1440 minutes), shared by all bins. |
 
 单人世界的房主可直接使用；多人服务器需要管理员权限。
@@ -153,9 +154,9 @@ Please verify the checksum after downloading.
 
 ```
 文件 / File : dustbin-fabric-1.1.0.jar
-大小 / Size : 179,868 bytes
-MD5         : 242e3f48754858138fb1c8a5d8ed9fdf
-SHA-256     : 1105bec80ffa0ec0068884019be32a3ca8d0e15c65ec2487363183e28ecc947c
+大小 / Size : 180,503 bytes
+MD5         : 038ece4347bfff0e5045f0b22dedbca1
+SHA-256     : 5d0e664848223046d871046175702807feba2eceb1371909db2e48da80b982cd
 ```
 
 ---

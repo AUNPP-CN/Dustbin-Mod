@@ -144,16 +144,12 @@ public class DustbinStorage extends SavedData {
 		return false;
 	}
 
-	/** 清空全部各类桶，返回移除的组数。 */
-	public int clearAll() {
-		int count = 0;
-		for (DustbinKind kind : DustbinKind.values()) {
-			count += clearAll(kind);
-		}
-		return count;
-	}
-
-	/** 清空指定种类的桶，返回移除的组数。 */
+	/**
+	 * 清空指定种类的桶，返回移除的组数。
+	 *
+	 * <p>「清空全部」不在这里：命令层需要<b>逐桶</b>拿到各自的数量好分别播报
+	 * （见 {@code ModCommands#clearAll}），所以由调用方遍历 {@link DustbinKind}。
+	 */
 	public int clearAll(DustbinKind kind) {
 		DustbinInventory inventory = getInventory(kind);
 		int count = 0;

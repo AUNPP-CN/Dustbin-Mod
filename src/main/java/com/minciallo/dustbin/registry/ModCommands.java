@@ -2,10 +2,9 @@ package com.minciallo.dustbin.registry;
 
 import com.minciallo.dustbin.storage.DustbinKind;
 import com.minciallo.dustbin.storage.DustbinStorage;
-import com.minciallo.dustbin.storage.DustbinInventory;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 
@@ -15,8 +14,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.permissions.Permissions;
-
-import org.jetbrains.annotations.Nullable;
 
 public class ModCommands {
 	// 26.2 中 CommandSourceStack 已移除旧的 hasPermission(int) 方法，改用 PermissionSet。
@@ -43,19 +40,21 @@ public class ModCommands {
 	public static void register() {
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, selection) -> {
 			dispatcher.register(Commands.literal("dustbin")
-					// 不带参数 -> 清空全部各类桶
-					// 带种类     -> 只清那一种
+					// 不带参数 / all -> 清空全部桶（逐桶报告）
+					// 带种类            -> 只清那一种
 					.then(Commands.literal("clear")
 							.requires(ModCommands::isAdmin)
-							.executes(context -> clear(context.getSource(), null))
-							.then(Commands.literal("normal")
-									.executes(context -> clear(context.getSource(), DustbinKind.NORMAL)))
-							.then(Commands.literal("kitchen")
-									.executes(context -> clear(context.getSource(), DustbinKind.KITCHEN)))
-							.then(Commands.literal("tool")
-									.executes(context -> clear(context.getSource(), DustbinKind.TOOL)))
-							.then(Commands.literal("mineral")
-									.executes(context -> clear(context.getSource(), DustbinKind.MINERAL))))
+							.executes(context -> clearAll(context.getSource()))
+							.then(Commands.literal("all")
+									.executes(context -> clearAll(context.getSource())))
+							// 主名与显示名一致，注册名派生的旧名作为别名保留：
+							//   NORMAL 的注册名是 dustbin:dustbin，TOOL 的是 dustbin:tool_dustbin。
+							.then(clearKind("other", DustbinKind.NORMAL))
+							.then(clearKind("normal", DustbinKind.NORMAL))
+							.then(clearKind("kitchen", DustbinKind.KITCHEN))
+							.then(clearKind("equipment", DustbinKind.TOOL))
+							.then(clearKind("tool", DustbinKind.TOOL))
+							.then(clearKind("mineral", DustbinKind.MINERAL)))
 					// 进桶时间各类共用，语义与 1.0.0 一致
 					.then(Commands.literal("settime")
 							.requires(ModCommands::isAdmin)
@@ -67,18 +66,39 @@ public class ModCommands {
 		});
 	}
 
-	/** @param kind 为 null 时清空全部桶 */
-	private static int clear(CommandSourceStack source, @Nullable DustbinKind kind) {
+	/** {@code /dustbin clear <name>} 的一个子节点：只清空 {@code kind} 这一种桶。 */
+	private static LiteralArgumentBuilder<CommandSourceStack> clearKind(String name, DustbinKind kind) {
+		return Commands.literal(name).executes(context -> clear(context.getSource(), kind));
+	}
+
+	/**
+	 * 清空全部种类的桶，并<b>逐桶报告</b>各自清掉了多少组
+	 * （而不是只给一个总数 —— 这样能一眼看出哪个桶里有东西）。
+	 */
+	private static int clearAll(CommandSourceStack source) {
 		ServerLevel level = source.getLevel();
 		DustbinStorage storage = DustbinStorage.get(level);
-		int cleared = kind == null ? storage.clearAll() : storage.clearAll(kind);
-		if (kind == null) {
-			source.sendSuccess(() -> Component.translatable("commands.dustbin.cleared", cleared), true);
-		} else {
-			source.sendSuccess(() -> Component.translatable("commands.dustbin.cleared_kind",
-					Component.translatable(kind.blockTranslationKey()), cleared), true);
+		int total = 0;
+		for (DustbinKind kind : DustbinKind.values()) {
+			int cleared = storage.clearAll(kind);
+			total += cleared;
+			report(source, kind, cleared);
 		}
+		int sum = total;
+		source.sendSuccess(() -> Component.translatable("commands.dustbin.cleared_total", sum), true);
+		return total;
+	}
+
+	/** 清空指定种类的桶。 */
+	private static int clear(CommandSourceStack source, DustbinKind kind) {
+		int cleared = DustbinStorage.get(source.getLevel()).clearAll(kind);
+		report(source, kind, cleared);
 		return cleared;
+	}
+
+	private static void report(CommandSourceStack source, DustbinKind kind, int cleared) {
+		source.sendSuccess(() -> Component.translatable("commands.dustbin.cleared_kind",
+				Component.translatable(kind.blockTranslationKey()), cleared), true);
 	}
 
 	private static int setTime(CommandSourceStack source, int minutes) {

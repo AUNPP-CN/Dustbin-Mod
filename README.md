@@ -65,9 +65,9 @@ The order is **equipment → kitchen → minerals → everything else**, and the
 
 **Kitchen waste** comes from four sources: a fixed item tag (bone, bone meal, seeds, rotten flesh, spider eye, poisonous potato, beetroot, cake); **any item carrying the food component** — so modded food is picked up automatically with no per-mod work; the vanilla `#minecraft:horse_food` tag (wheat, sugar, hay blocks, …); and optional cross-mod entries — `#c:foods/edible_when_placed`, which covers food blocks you have to place down before eating (Farmer's Delight's sushi platter and whole pies), plus Farmer's Delight's animal feed (**horse feed** and dog food).
 
-**装备**取自 `#minecraft:` 的镐、锹、斧、锄、剑、矛，以及四种护甲标签（头盔、胸甲、护腿、靴子）；可选的 `#c:tools/knife` 让各类厨刀一并归入装备桶。剪子、打火石、刷子、钓鱼竿**不算**装备，仍进其他垃圾桶。
+**装备**取自 `#minecraft:` 的镐、锹、斧、锄、剑、矛，以及四种护甲标签（头盔、胸甲、护腿、靴子）；**盾牌**与**三叉戟**单独登记（它们不属于上述任何标签，只能点名）；可选的 `#c:tools/knife` 让各类厨刀一并归入装备桶。剪子、打火石、刷子、钓鱼竿**不算**装备，仍进其他垃圾桶。
 
-**Equipment** comes from the `#minecraft:` tags for pickaxes, shovels, axes, hoes, swords, spears and the four armour slots (helmet, chestplate, leggings, boots). The optional `#c:tools/knife` tag pulls in knives from various mods. Shears, flint and steel, brushes and fishing rods are **not** treated as equipment — they go to the Other Bin.
+**Equipment** comes from the `#minecraft:` tags for pickaxes, shovels, axes, hoes, swords, spears and the four armour slots (helmet, chestplate, leggings, boots). **Shields** and **tridents** are listed by name, because no tag above covers them. The optional `#c:tools/knife` tag pulls in knives from various mods. Shears, flint and steel, brushes and fishing rods are **not** treated as equipment — they go to the Other Bin.
 
 **矿物**收的是「从地里挖到的，或直接由这些材料铸成的」：八种矿石（煤、铜、铁、金、钻石、绿宝石、青金石、红石）、下界石英矿石、原矿与粗矿块、煤炭与木炭、金属粒、铜块（含氧化与涂蜡变种）、各类锭（铁 / 金 / 铜 / 下界合金）、下界合金碎片、钻石、绿宝石、青金石、红石、下界石英、紫水晶碎片、远古残骸，以及矿物块。**不收加工品** —— 铜门、铜台阶、红石灯、石英楼梯这类建材仍进其他垃圾桶。
 
@@ -118,8 +118,9 @@ Needs a **stone pickaxe or better** — a wooden pickaxe yields nothing. Hardnes
 
 | 指令 Command | 作用 Description |
 | --- | --- |
-| `/dustbin clear` | 清空**全部桶**，反馈清掉的物品组数。Empty every bin; reports how many stacks were cleared. |
-| `/dustbin clear <normal\|kitchen\|tool\|mineral>` | 只清空指定的一种桶。Empty just the one bin. |
+| `/dustbin clear` | 清空**全部四个桶**，并**逐个桶**报告各自清掉了几组。Empty every bin, reporting each bin's own count. |
+| `/dustbin clear all` | 同上，显式写法。The same thing, spelled out. |
+| `/dustbin clear <other\|kitchen\|equipment\|mineral>` | 只清空指定的**那一个**桶。Empty just that one bin.<br>`normal`（= other）、`tool`（= equipment）是等效别名，两种写法都认。`normal` and `tool` are accepted aliases. |
 | `/dustbin settime <minutes>` | 设置收集阈值，范围 1 ~ 1440 分钟；所有桶**共用一个值**。Set the collection threshold (1–1440 minutes), shared by all bins. |
 
 权限：单人世界的房主可直接使用；多人服务器需要管理员权限。
