@@ -1,7 +1,5 @@
 # Dustbin-Mod
 
-![Dustbin](src/main/resources/assets/dustbin/icon.png)
-
 ![Minecraft](https://img.shields.io/badge/Minecraft-26.2-brightgreen)
 
 ![Loaders](https://img.shields.io/badge/Loaders-Fabric-blue)
@@ -48,18 +46,19 @@ The mod id is `dustbin` and **stays the same across loaders**; only the artifact
 - 对应的垃圾桶已满时（54 格全占、且没有同类物品所在格），物品**回落到原版行为**正常消失 —— 它是兜底，不是无限仓库。  
   When the bin it belongs to is full (all 54 slots taken, with no slot holding the same item), items **fall back to vanilla despawn** — the bin is a safety net, not unlimited storage.
 
+
 ### 四类垃圾桶 / Four kinds of bin
 
-| 垃圾桶 Bin | 收什么 What it collects | 合成时的中心材料 Core item |
-| --- | --- | --- |
-| **其他垃圾桶 / Other Bin** | 兜底 —— 其它三类都不匹配的物品。Anything left over. | 箱子 / Chest |
-| **厨余垃圾桶 / Kitchen Bin** | 食物与厨余。Food and kitchen scraps. | 骨头 / Bone |
-| **装备垃圾桶 / Equipment Bin** | 工具、武器、护甲。Tools, weapons and armour. | 铁镐 / Iron Pickaxe |
-| **矿物垃圾桶 / Mineral Bin** | 矿石、原矿、锭、宝石、矿物块。Ores, raw materials, ingots, gems and mineral blocks. | 铁块 / Iron Block |
+| 垃圾桶 Bin                   | 收什么 What it collects                                                 | 合成时的中心材料 Core item |
+| ------------------------- | -------------------------------------------------------------------- | ------------------ |
+| **其他垃圾桶 / Other Bin**     | 兜底 —— 其它三类都不匹配的物品。Anything left over.                                | 箱子 / Chest         |
+| **厨余垃圾桶 / Kitchen Bin**   | 食物与厨余。Food and kitchen scraps.                                       | 骨头 / Bone          |
+| **装备垃圾桶 / Equipment Bin** | 工具、武器、护甲。Tools, weapons and armour.                                  | 铁镐 / Iron Pickaxe  |
+| **矿物垃圾桶 / Mineral Bin**   | 矿石、原矿、锭、宝石、矿物块。Ores, raw materials, ingots, gems and mineral blocks. | 铁块 / Iron Block    |
 
 ![四类垃圾桶 / The four bins](docs/bins-preview.png)
 
-> 从左到右：其他（灰 · 回收标志）/ 厨余（绿 · 腐肉）/ 装备（钢蓝 · 铁镐）/ 矿物（铜橙 · 钻石）。
+> 从左到右：其他（灰 · 回收标志）/ 厨余（绿 · 腐肉）/ 装备（钢蓝 · 铁镐）/ 矿物（铜橙 · 钻石）。  
 > Left to right: Other (grey · recycle mark), Kitchen (green · rotten flesh), Equipment (steel blue · iron pickaxe), Mineral (copper orange · diamond).
 
 判定顺序是 **装备 → 厨余 → 矿物 → 其他**，第一个匹配的生效（所以一把铁镐进装备桶、铁锭进矿物桶，都不会落到其他桶）。
@@ -88,12 +87,12 @@ All classification lives in datapack tags, so you can retune it by editing a tag
 
 ### 54 格共享存储 / 54 slots, shared storage
 
-| 规则 Rule | 说明 Description |
-| --- | --- |
-| 同一维度内共享 / Shared per dimension | 同一维度内所有垃圾桶共用同一份存储，不是每个方块各存一份。Every bin in a dimension reads the same storage — not one per block. |
-| 一种物品只占一格 / One item type per slot | 相同 id + 组件视为同种，绝不跨格堆放。Matching id + components count as one type, and never span slots. |
-| 每格上限 = 物品自身上限 / Per-slot cap = the item's own cap | 鸡蛋 16、石头 64、工具 1。Eggs 16, stone 64, tools 1. |
-| 超出部分直接丢弃 / Overflow is discarded | 已存 64 个石头时再来 65 个 → 只保留 64，多出的丢掉。65 stone on top of 64 stored → keep 64, discard the rest. |
+| 规则 Rule                                           | 说明 Description                                                                                    |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| 同一维度内共享 / Shared per dimension                    | 同一维度内所有垃圾桶共用同一份存储，不是每个方块各存一份。Every bin in a dimension reads the same storage — not one per block. |
+| 一种物品只占一格 / One item type per slot                 | 相同 id + 组件视为同种，绝不跨格堆放。Matching id + components count as one type, and never span slots.           |
+| 每格上限 = 物品自身上限 / Per-slot cap = the item's own cap | 鸡蛋 16、石头 64、工具 1。Eggs 16, stone 64, tools 1.                                                      |
+| 超出部分直接丢弃 / Overflow is discarded                  | 已存 64 个石头时再来 65 个 → 只保留 64，多出的丢掉。65 stone on top of 64 stored → keep 64, discard the rest.        |
 
 ### 只取不放 / Take-only GUI
 
@@ -121,12 +120,12 @@ Needs a **stone pickaxe or better** — a wooden pickaxe yields nothing. Hardnes
 
 ### 指令 / Commands
 
-| 指令 Command | 作用 Description |
-| --- | --- |
-| `/dustbin clear` | 清空**全部四个桶**，并**逐个桶**报告各自清掉了几组。Empty every bin, reporting each bin's own count. |
-| `/dustbin clear all` | 同上，显式写法。The same thing, spelled out. |
+| 指令 Command                                            | 作用 Description                                                                                                                        |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `/dustbin clear`                                      | 清空**全部四个桶**，并**逐个桶**报告各自清掉了几组。Empty every bin, reporting each bin's own count.                                                        |
+| `/dustbin clear all`                                  | 同上，显式写法。The same thing, spelled out.                                                                                                  |
 | `/dustbin clear <other\|kitchen\|equipment\|mineral>` | 只清空指定的**那一个**桶。Empty just that one bin.<br>`normal`（= other）、`tool`（= equipment）是等效别名，两种写法都认。`normal` and `tool` are accepted aliases. |
-| `/dustbin settime <minutes>` | 设置收集阈值，范围 1 ~ 1440 分钟；所有桶**共用一个值**。Set the collection threshold (1–1440 minutes), shared by all bins. |
+| `/dustbin settime <minutes>`                          | 设置收集阈值，范围 1 ~ 1440 分钟；所有桶**共用一个值**。Set the collection threshold (1–1440 minutes), shared by all bins.                                 |
 
 权限：单人世界的房主可直接使用；多人服务器需要管理员权限。
 
@@ -158,12 +157,12 @@ I C I
 I I I
 ```
 
-| 产物 Output | 中心材料 Core (`C`) |
-| --- | --- |
-| 其他垃圾桶 / Other Bin | 箱子 / Chest |
-| 厨余垃圾桶 / Kitchen Bin | 骨头 / Bone |
+| 产物 Output             | 中心材料 Core (`C`)   |
+| --------------------- | ----------------- |
+| 其他垃圾桶 / Other Bin     | 箱子 / Chest        |
+| 厨余垃圾桶 / Kitchen Bin   | 骨头 / Bone         |
 | 装备垃圾桶 / Equipment Bin | 铁镐 / Iron Pickaxe |
-| 矿物垃圾桶 / Mineral Bin | 铁块 / Iron Block |
+| 矿物垃圾桶 / Mineral Bin   | 铁块 / Iron Block   |
 
 `I` = 铁锭 / Iron Ingot
 
@@ -193,6 +192,7 @@ Fabric 构建通过 Mixin 注入 `ItemEntity#tick`。与其他同样改写掉落
 The Fabric build mixes into `ItemEntity#tick`. It **may conflict** with other mods that rewrite item despawn behaviour — test it before shipping it in a pack.
 
 ---
+
 
 ## 行为细节与已知限制 / Behaviour and known limitations
 
