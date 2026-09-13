@@ -1,8 +1,11 @@
 # Dustbin 1.1.0 需求与实施清单
 
-> 状态：**已确认，第 1 批已实施**（6 项决策见第九节）  
+> 状态：**已全部实施**（分类规则几经追加，最终形态见 2.4 与第九节）  
 > 版本：`1.1.0` ｜ tag 将使用 `26.2-Fabric-1.1.0` ｜ 直接在 `Fabric` 分支开发  
 > 目标：新增「厨余垃圾桶」「工具垃圾桶」两类分类垃圾桶，未匹配的物品仍进原有的普通垃圾桶。
+>
+> 已完成：框架 / 注册接线 / 资源与数据文件 / 12 张占位贴图 / 标签离线验证 / 部署到 mods。
+> 未完成：游戏内实测、README 更新、推送。**本文档记录设计与决策，不再要求逐条确认。**
 
 
 
@@ -45,13 +48,18 @@
 同样实测确认：游戏本体存在数据组件 **`minecraft:tool`** 与 **`minecraft:weapon`**  
 （`DataComponents.TOOL` / `DataComponents.WEAPON`），可用于识别模组工具。
 
-**三种实现方案（需要你选一个）：**
+**最终采用方案 C（标签驱动）** —— 判定完全由 `#dustbin:tool_waste` 标签决定，
+默认引用原生标签，需要扩充时改标签即可，不必重新编译：
 
-| 方案                   | 判定方式                                           | 优点              | 缺点                                |
-| -------------------- | ---------------------------------------------- | --------------- | --------------------------------- |
-| **A. 标签驱动**          | 引用上述 5 个原生标签                                   | 行为完全可预测，只收这 5 类 | 模组工具若未加入这些标签则**不会**被收             |
-| **B. 组件驱动**          | 检测 `minecraft:tool` / `minecraft:weapon` 组件    | 自动覆盖模组工具        | 会**连带收走**剪子、刷子、打火石等带 `tool` 组件的物品 |
-| **C. 标签 + 自建标签（推荐）** | 默认引用 5 个原生标签，另建 `#dustbin:tool_waste` 供你/数据包扩充 | 默认行为可预测，又能按需扩展  | 需要多维护一个标签文件                       |
+| 引用 | 覆盖 |
+|---|---|
+| `#minecraft:pickaxes` / `shovels` / `axes` / `hoes` / `swords` | 各类工具，各 7 种材质 |
+| `#minecraft:spears` | **矛**（26.2 新增，共 7 种） |
+| `#minecraft:head_armor` / `chest_armor` / `leg_armor` / `foot_armor` | 四件套装备 |
+| `#c:tools/knife`（**可选**） | 通用刀具标签 → 农夫乐事 6 把刀 + MrCrayfish 家具 1 把 |
+
+刻意**不**用 `minecraft:tool` 组件：它还会覆盖剪子、刷子、打火石，会把它们一并收进来。
+实测确认剪子 / 打火石 / 刷子 / 钓鱼竿 / 狼铠 / 马铠**均不在**上述标签内。
 
 ### 2.2 厨余类 —— 存在技术障碍，需你确认口径
 
@@ -238,3 +246,47 @@
 - 食物判定用 `minecraft:food` 数据组件，因此**模组食物也会被自动识别**。
 - 存档兼容：序列化字段 `items` 继续表示普通垃圾桶，仅新增 `kitchen_items` / `tool_items` 两个**可选**字段。
 - 刻意不改的部分：渲染器、菜单、界面（三种桶共用几何与菜单，差异由模型 JSON 承担）。
+
+---
+
+## 十、追加功能（2026-09-13 傍晚，用户追加）
+
+### 10.1 专属创造模式物品栏「更多的垃圾桶」
+
+| 项 | 值 |
+|---|---|
+| 标签页标题 | `itemGroup.dustbin.bins` → **更多的垃圾桶** / **More Bins** |
+| 注册 id | `dustbin:bins`（`Registries.CREATIVE_MODE_TAB`） |
+| 图标 | 普通垃圾桶（`dustbin:dustbin`） |
+| 内容 | `DustbinKind.values()` 顺序 —— 其他 / 厨余 / 工具 三个桶 |
+| 实现 | `registry/ModCreativeTabs.java`，静态初始化即注册 |
+
+- 三种桶**从原版「建筑方块」栏移出**，只在新标签页里出现（避免重复）
+- 用的是 Fabric 的 `FabricCreativeModeTab.builder()`；它会按命名空间把模组标签页归组，
+  不需要自己指定插入位置。若标签页超出一页，Fabric 会自动加分页箭头。
+- 注册走原版的 `Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, ResourceKey, tab)`
+
+### 10.2 成就「回收再利用！」
+
+| 项 | 值 |
+|---|---|
+| 文件 | `data/dustbin/advancement/recycle.json`（**单数** `advancement` 目录） |
+| id | `dustbin:recycle` |
+| 标题 | `advancements.dustbin.recycle.title` → **回收再利用！** / **Recycle!** |
+| 描述 | `...description` → 合成你的第一个垃圾桶 / Craft your first bin |
+| 图标 | `dustbin:dustbin` ｜ `frame`: `goal` |
+| 触发 | `minecraft:recipe_crafted` |
+| 父进度 | `minecraft:story/root` |
+
+**「合成任意一种即可」是怎么表达的**：三个 criteria（分别对应三个配方）放进
+`requirements` 的**同一个组**里 —— 组内是「或」，组间是「与」：
+
+```json
+"requirements": [["craft_dustbin", "craft_kitchen_dustbin", "craft_tool_dustbin"]]
+```
+
+**关于父进度**：`minecraft:story/root` 的达成条件就是「拿到工作台」，而合成垃圾桶
+本身就需要工作台，所以父进度必然先于本成就达成 —— 不会出现节点被遮挡（显示 `???`）的情况。
+
+> 若更希望它独占一个标签页，可改为「自建根进度 + `display.background`」，
+> 代价是进度界面会多出一个只有单个节点的标签页。

@@ -10,5 +10,8 @@
   "block.dustbin.tool_dustbin": "工具垃圾桶",
   "item.dustbin.tool_dustbin": "工具垃圾桶",
   "container.dustbin.tool_dustbin": "工具垃圾桶",
-  "commands.dustbin.cleared_kind": "已从%1$s中清空 %2$s 组物品。"
+  "commands.dustbin.cleared_kind": "已从%1$s中清空 %2$s 组物品。",
+  "itemGroup.dustbin.bins": "更多的垃圾桶",
+  "advancements.dustbin.recycle.title": "回收再利用！",
+  "advancements.dustbin.recycle.description": "合成你的第一个垃圾桶"
 }

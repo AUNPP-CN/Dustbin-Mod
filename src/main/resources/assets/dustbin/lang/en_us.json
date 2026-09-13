@@ -10,5 +10,8 @@
   "block.dustbin.tool_dustbin": "Tool Bin",
   "item.dustbin.tool_dustbin": "Tool Bin",
   "container.dustbin.tool_dustbin": "Tool Bin",
-  "commands.dustbin.cleared_kind": "Cleared %2$s item stacks from the %1$s."
+  "commands.dustbin.cleared_kind": "Cleared %2$s item stacks from the %1$s.",
+  "itemGroup.dustbin.bins": "More Bins",
+  "advancements.dustbin.recycle.title": "Recycle!",
+  "advancements.dustbin.recycle.description": "Craft your first bin"
 }

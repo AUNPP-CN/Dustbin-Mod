@@ -1,0 +1,44 @@
+{
+  "parent": "minecraft:story/root",
+  "criteria": {
+    "craft_dustbin": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "dustbin:dustbin"
+      }
+    },
+    "craft_kitchen_dustbin": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "dustbin:kitchen_dustbin"
+      }
+    },
+    "craft_tool_dustbin": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipe_id": "dustbin:tool_dustbin"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "craft_dustbin",
+      "craft_kitchen_dustbin",
+      "craft_tool_dustbin"
+    ]
+  ],
+  "display": {
+    "icon": {
+      "id": "dustbin:dustbin"
+    },
+    "title": {
+      "translate": "advancements.dustbin.recycle.title"
+    },
+    "description": {
+      "translate": "advancements.dustbin.recycle.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  }
+}
