@@ -10,6 +10,8 @@
     "#minecraft:chest_armor",
     "#minecraft:leg_armor",
     "#minecraft:foot_armor",
+    "minecraft:shield",
+    "minecraft:trident",
     {
       "id": "#c:tools/knife",
       "required": false
