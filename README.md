@@ -225,6 +225,13 @@ The artifact lands in `build/libs/dustbin-fabric-1.1.0.jar`.
 
 ---
 
+## 贡献者 / Contributors
+
+- **MinCiallo** —— 维护者 / Maintainer
+- **[XY845](https://github.com/XY845)** —— 修复垃圾桶盖动画 / Fixed the bin lid animation ([#2](https://github.com/AUNPP-CN/Dustbin-Mod/pull/2))
+
+---
+
 ## 许可证 / License
 
 [CC BY-NC-SA 4.0](LICENSE) —— 允许使用、修改与再分发，但**必须署名**、**不得用于商业用途**，且衍生作品需以相同协议共享。
