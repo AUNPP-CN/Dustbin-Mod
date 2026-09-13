@@ -10,12 +10,12 @@
 
 ![License](https://img.shields.io/badge/License-CC_BY--NC--SA_4.0-lightgrey)
 
-> 掉落物不再无声消失 —— 它们会滑进一个共享的垃圾桶。  
-> Dropped items no longer vanish silently — they slide into a shared trash bin.
+> 掉落物不再无声消失 —— 它们会按类别滑进垃圾桶。  
+> Dropped items no longer vanish silently — they sort themselves into a bin.
 
-一个 **Minecraft 26.2** 的模组：原版里掉落物 5 分钟后直接消失；这个模组把它改成：**掉落物在设定时间后进入垃圾桶**，你随时可以把东西捡回来。
+一个 **Minecraft 26.2** 的模组：原版里掉落物 5 分钟后直接消失；这个模组把它改成：**掉落物在设定时间后自动分类进桶**，你随时可以把东西捡回来。桶一共三种 —— **厨余 / 工具 / 其他**，各收各的。
 
-A mod for **Minecraft 26.2**: in vanilla, dropped items despawn after 5 minutes. This mod changes that — items are moved into a trash bin after a configurable delay, and you can take them back out whenever you like.
+A mod for **Minecraft 26.2**: in vanilla, dropped items despawn after 5 minutes. This mod changes that — items are **sorted into a bin** after a configurable delay, and you can take them back out whenever you like. There are three bins — **kitchen waste**, **tools**, and everything else.
 
 ![垃圾桶的关闭与打开状态（离线渲染）/ Closed and open states (offline render)](docs/preview.png)
 
@@ -41,12 +41,40 @@ The mod id is `dustbin` and **stays the same across loaders**; only the artifact
 
 ### 掉落物进桶 / Items drop into the bin
 
-- 物品存活时间达到阈值后自动收入垃圾桶，原版的 5 分钟消失逻辑被取消。  
-  Items are collected as soon as they reach the configured age; vanilla's 5-minute despawn is cancelled.
+- 物品存活时间达到阈值后，自动收入**对应的那个桶**，原版的 5 分钟消失逻辑被取消。  
+  Items are collected into **the bin they belong to** as soon as they reach the configured age; vanilla's 5-minute despawn is cancelled.
 - 阈值默认 **1 分钟**，可调范围 **1 ~ 1440 分钟**。  
   The default threshold is **1 minute**, adjustable between **1 and 1440 minutes**.
-- 垃圾桶已满时（54 格全占、且没有同类物品所在格），物品**回落到原版行为**正常消失 —— 它是兜底，不是无限仓库。  
-  When the bin is full (all 54 slots taken, with no slot holding the same item), items **fall back to vanilla despawn** — the bin is a safety net, not unlimited storage.
+- 对应的垃圾桶已满时（54 格全占、且没有同类物品所在格），物品**回落到原版行为**正常消失 —— 它是兜底，不是无限仓库。  
+  When the bin it belongs to is full (all 54 slots taken, with no slot holding the same item), items **fall back to vanilla despawn** — the bin is a safety net, not unlimited storage.
+
+### 三类垃圾桶 / Three kinds of bin
+
+| 垃圾桶 Bin | 收什么 What it collects | 合成时的中心材料 Core item |
+| --- | --- | --- |
+| **其他垃圾桶 / Other Bin** | 兜底 —— 前两类都不匹配的物品。Anything left over. | 箱子 / Chest |
+| **厨余垃圾桶 / Kitchen Bin** | 食物与厨余。Food and kitchen scraps. | 骨头 / Bone |
+| **工具垃圾桶 / Tool Bin** | 工具、武器、装备。Tools, weapons and armour. | 铁镐 / Iron Pickaxe |
+
+判定顺序是 **工具 → 厨余 → 其他**，第一个匹配的生效（所以一把铁镐进工具桶，而不是其他桶）。
+
+The order is **tools → kitchen → everything else**, and the first match wins (an iron pickaxe goes to the Tool Bin, not the Other Bin).
+
+**厨余**由三部分构成：一份固定的物品标签（骨头、骨粉、各类种子、腐肉、蜘蛛眼、毒马铃薯、甜菜根、蛋糕）；**任何带食物组件的物品**（模组食物因此能自动识别，无需逐个适配）；以及可选的跨模组标签 `#c:foods/edible_when_placed`，覆盖「放下才能吃」的食物方块，例如农夫乐事的寿司拼盘与各类整块派。
+
+**Kitchen waste** comes from three sources: a fixed item tag (bone, bone meal, seeds, rotten flesh, spider eye, poisonous potato, beetroot, cake); **any item carrying the food component** — so modded food is picked up automatically with no per-mod work; and the optional cross-mod tag `#c:foods/edible_when_placed`, which covers food blocks you have to place down before eating (Farmer's Delight's sushi platter and whole pies, for instance).
+
+**工具**取自 `#minecraft:` 的镐、锹、斧、锄、剑、矛，以及四种护甲标签（头盔、胸甲、护腿、靴子）；可选的 `#c:tools/knife` 让各类厨刀一并归入工具桶。剪子、打火石、刷子、钓鱼竿**不算**工具，仍进其他垃圾桶。
+
+**Tools** come from the `#minecraft:` tags for pickaxes, shovels, axes, hoes, swords, spears and the four armour slots (helmet, chestplate, leggings, boots). The optional `#c:tools/knife` tag pulls in knives from various mods. Shears, flint and steel, brushes and fishing rods are **not** treated as tools — they go to the Other Bin.
+
+上述两条跨模组标签都是**可选引用**（`required: false`），所以**装或不装那些模组都不会导致标签加载失败**。
+
+Both cross-mod tags are **optional** references (`required: false`), so they cannot break tag loading whether or not those mods are present.
+
+分类规则全部写在数据包标签里，可以直接改标签、或用数据包覆盖，**不需要重新编译模组**。
+
+All classification lives in datapack tags, so you can retune it by editing a tag or overriding it from a datapack — **no recompiling needed**.
 
 ### 54 格共享存储 / 54 slots, shared storage
 
@@ -85,18 +113,33 @@ Needs a **stone pickaxe or better** — a wooden pickaxe yields nothing. Hardnes
 
 | 指令 Command | 作用 Description |
 | --- | --- |
-| `/dustbin clear` | 清空垃圾桶，反馈清掉的物品组数。Empty the bin; reports how many stacks were cleared. |
-| `/dustbin settime <minutes>` | 设置收集阈值，范围 1 ~ 1440 分钟。Set the collection threshold (1–1440 minutes). |
+| `/dustbin clear` | 清空**全部三个桶**，反馈清掉的物品组数。Empty all three bins; reports how many stacks were cleared. |
+| `/dustbin clear <normal\|kitchen\|tool>` | 只清空指定的一种桶。Empty just the one bin. |
+| `/dustbin settime <minutes>` | 设置收集阈值，范围 1 ~ 1440 分钟；三个桶**共用一个值**。Set the collection threshold (1–1440 minutes), shared by all three bins. |
 
 权限：单人世界的房主可直接使用；多人服务器需要管理员权限。
 
 Permissions: singleplayer hosts can use them directly; multiplayer servers require admin permission.
 
+### 创造模式物品栏 / Creative tab
+
+创造模式背包里有一个专属页签「**更多的垃圾桶 / More Bins**」，三个桶都放在里面。
+
+Creative mode has a dedicated tab, **More Bins**, holding all three bins.
+
+### 成就 / Advancement
+
+**首次合成任意一个垃圾桶**（不限哪一种）会解锁成就「**回收再利用！ / Recycle!**」。
+
+Crafting **any** bin for the first time unlocks the advancement **Recycle!**
+
 ---
 
 ## 合成 / Crafting
 
-8 个铁锭围 1 个箱子 / 8 iron ingots around 1 chest:
+三个桶的摆法完全一样 —— 8 个铁锭围住 1 个中心材料，**只有中心材料不同**。
+
+All three bins share the same shape — 8 iron ingots around one core item — and **only the core differs**:
 
 ```
 I I I
@@ -104,7 +147,13 @@ I C I
 I I I
 ```
 
-`I` = 铁锭 / Iron Ingot ・ `C` = 箱子 / Chest
+| 产物 Output | 中心材料 Core (`C`) |
+| --- | --- |
+| 其他垃圾桶 / Other Bin | 箱子 / Chest |
+| 厨余垃圾桶 / Kitchen Bin | 骨头 / Bone |
+| 工具垃圾桶 / Tool Bin | 铁镐 / Iron Pickaxe |
+
+`I` = 铁锭 / Iron Ingot
 
 ---
 
@@ -116,8 +165,8 @@ Only a Fabric build is available for now:
 
 1. 安装 **Fabric Loader ≥ 0.19.3** 与 **Fabric API**  
    Install **Fabric Loader ≥ 0.19.3** and **Fabric API**
-2. 把 `dustbin-fabric-1.0.0.jar` 放进 `mods/`  
-   Put `dustbin-fabric-1.0.0.jar` into `mods/`
+2. 把 `dustbin-fabric-1.1.0.jar` 放进 `mods/`  
+   Put `dustbin-fabric-1.1.0.jar` into `mods/`
 3. 需要 **Java 25**  
    Requires **Java 25**
 
@@ -125,7 +174,7 @@ Only a Fabric build is available for now:
 
 ## 兼容性 / Compatibility
 
-**Minecraft** 26.2 ・ **Java** ≥ 25 ・ **Fabric Loader** ≥ 0.19.3（当前构建 / current build）
+**Minecraft** 26.2 ・ **Java** ≥ 25 ・ **Fabric Loader** ≥ 0.19.3
 
 Fabric 构建通过 Mixin 注入 `ItemEntity#tick`。与其他同样改写掉落物消失逻辑的模组同时使用时**可能冲突**，建议实测。
 
@@ -156,9 +205,9 @@ Issues and pull requests are welcome.
 ./gradlew build
 ```
 
-产物位于 `build/libs/dustbin-fabric-1.0.0.jar`。
+产物位于 `build/libs/dustbin-fabric-1.1.0.jar`。
 
-The artifact lands in `build/libs/dustbin-fabric-1.0.0.jar`.
+The artifact lands in `build/libs/dustbin-fabric-1.1.0.jar`.
 
 ---
 
