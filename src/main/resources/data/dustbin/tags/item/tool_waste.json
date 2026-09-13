@@ -1,0 +1,15 @@
+{
+  "values": [
+    "#minecraft:pickaxes",
+    "#minecraft:shovels",
+    "#minecraft:axes",
+    "#minecraft:hoes",
+    "#minecraft:swords",
+    "#minecraft:spears",
+    "#minecraft:head_armor",
+    "#minecraft:chest_armor",
+    "#minecraft:leg_armor",
+    "#minecraft:foot_armor",
+    "#c:tools/knife"
+  ]
+}

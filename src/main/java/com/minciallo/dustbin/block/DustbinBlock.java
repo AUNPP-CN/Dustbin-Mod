@@ -1,5 +1,7 @@
 package com.minciallo.dustbin.block;
 
+import com.minciallo.dustbin.storage.DustbinKind;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
@@ -58,11 +60,23 @@ public class DustbinBlock extends Block implements EntityBlock {
 	 */
 	private static final VoxelShape SHAPE = Block.box(2.5, 0.0, 2.5, 13.5, 12.5, 13.5);
 
-	public DustbinBlock(Properties properties) {
+	/**
+	 * 属于哪一种垃圾桶。三种桶共用这一个方块类与同一个方块实体类型，
+	 * 差异只体现在这里携带的 {@link DustbinKind}、注册名，以及模型 JSON 引用的贴图上。
+	 */
+	private final DustbinKind kind;
+
+	public DustbinBlock(DustbinKind kind, Properties properties) {
 		super(properties);
+		this.kind = kind;
 		registerDefaultState(stateDefinition.any()
 				.setValue(OPEN, false)
 				.setValue(FACING, Direction.SOUTH));
+	}
+
+	/** 该方块对应的垃圾桶种类。 */
+	public DustbinKind getKind() {
+		return kind;
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package com.minciallo.dustbin.block;
 import com.minciallo.dustbin.menu.DustbinMenu;
 import com.minciallo.dustbin.registry.ModBlockEntities;
 import com.minciallo.dustbin.storage.DustbinInventory;
+import com.minciallo.dustbin.storage.DustbinKind;
 import com.minciallo.dustbin.storage.DustbinStorage;
 
 import net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider;
@@ -21,11 +22,21 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Block entity for the trash bin. It does not store items itself; it acts as a
- * portal to the global shared storage (DustbinStorage).
+ * portal to the global shared storage ({@link DustbinStorage}).
+ *
+ * <p>箱子属于哪一种由所在方块决定（{@link DustbinBlock#getKind()}），
+ * 因此同一个方块实体类型可以为三种垃圾桶服务。
  */
 public class DustbinBlockEntity extends BlockEntity implements ExtendedMenuProvider<BlockPos> {
 	public DustbinBlockEntity(BlockPos pos, BlockState state) {
 		super(ModBlockEntities.DUSTBIN, pos, state);
+	}
+
+	/** 所在方块的垃圾桶种类。 */
+	public DustbinKind getKind() {
+		return getBlockState().getBlock() instanceof DustbinBlock dustbin
+				? dustbin.getKind()
+				: DustbinKind.NORMAL;
 	}
 
 	/**
@@ -45,7 +56,8 @@ public class DustbinBlockEntity extends BlockEntity implements ExtendedMenuProvi
 
 	@Override
 	public Component getDisplayName() {
-		return Component.translatable("container.dustbin.dustbin");
+		// 界面标题即方块名：三种桶各自返回自己的 key，菜单与界面无需感知种类。
+		return Component.translatable(getKind().containerTranslationKey());
 	}
 
 	@Override
@@ -64,7 +76,7 @@ public class DustbinBlockEntity extends BlockEntity implements ExtendedMenuProvi
 	 */
 	private Container getStorageInventory() {
 		if (level instanceof ServerLevel serverLevel) {
-			return DustbinStorage.get(serverLevel).getInventory();
+			return DustbinStorage.get(serverLevel).getInventory(getKind());
 		}
 		return new DustbinInventory();
 	}

@@ -1,5 +1,7 @@
 {
   "values": [
-    "dustbin:dustbin"
+    "dustbin:dustbin",
+    "dustbin:kitchen_dustbin",
+    "dustbin:tool_dustbin"
   ]
 }

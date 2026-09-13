@@ -1,7 +1,14 @@
 {
-  "block.dustbin.dustbin": "Trash Bin",
-  "item.dustbin.dustbin": "Trash Bin",
-  "container.dustbin.dustbin": "Trash Bin",
+  "block.dustbin.dustbin": "Other Bin",
+  "item.dustbin.dustbin": "Other Bin",
+  "container.dustbin.dustbin": "Other Bin",
   "commands.dustbin.cleared": "Cleared %s item stacks from the trash bin.",
-  "commands.dustbin.settime": "Dropped items will now enter the trash bin after %s minute(s)."
+  "commands.dustbin.settime": "Dropped items will now enter the trash bin after %s minute(s).",
+  "block.dustbin.kitchen_dustbin": "Kitchen Waste Bin",
+  "item.dustbin.kitchen_dustbin": "Kitchen Waste Bin",
+  "container.dustbin.kitchen_dustbin": "Kitchen Waste Bin",
+  "block.dustbin.tool_dustbin": "Tool Bin",
+  "item.dustbin.tool_dustbin": "Tool Bin",
+  "container.dustbin.tool_dustbin": "Tool Bin",
+  "commands.dustbin.cleared_kind": "Cleared %2$s item stacks from the %1$s."
 }

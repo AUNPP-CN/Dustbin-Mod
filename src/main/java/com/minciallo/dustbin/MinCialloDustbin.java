@@ -4,6 +4,7 @@ import com.minciallo.dustbin.registry.ModBlockEntities;
 import com.minciallo.dustbin.registry.ModBlocks;
 import com.minciallo.dustbin.registry.ModCommands;
 import com.minciallo.dustbin.registry.ModMenuTypes;
+import com.minciallo.dustbin.storage.DustbinKind;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
@@ -28,10 +29,14 @@ public class MinCialloDustbin implements ModInitializer {
 		ModMenuTypes.register();
 		ModCommands.register();
 
-		// Add the trash bin to the vanilla "Building Blocks" creative tab.
+		// Add all three trash bins to the vanilla "Building Blocks" creative tab.
 		CreativeModeTabEvents.modifyOutputEvent(
 				ResourceKey.create(Registries.CREATIVE_MODE_TAB, Identifier.withDefaultNamespace("building_blocks")))
-				.register(output -> output.accept(ModBlocks.DUSTBIN_ITEM));
+				.register(output -> {
+					for (DustbinKind kind : DustbinKind.values()) {
+						output.accept(ModBlocks.item(kind));
+					}
+				});
 
 		LOGGER.info("Dustbin loaded!");
 	}

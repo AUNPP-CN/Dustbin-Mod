@@ -1,5 +1,6 @@
 package com.minciallo.dustbin.registry;
 
+import com.minciallo.dustbin.storage.DustbinKind;
 import com.minciallo.dustbin.storage.DustbinStorage;
 import com.minciallo.dustbin.storage.DustbinInventory;
 
@@ -14,6 +15,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.permissions.Permissions;
+
+import org.jetbrains.annotations.Nullable;
 
 public class ModCommands {
 	// 26.2 中 CommandSourceStack 已移除旧的 hasPermission(int) 方法，改用 PermissionSet。
@@ -40,9 +43,18 @@ public class ModCommands {
 	public static void register() {
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, selection) -> {
 			dispatcher.register(Commands.literal("dustbin")
+					// 不带参数 -> 清空全部三种桶
+					// 带种类     -> 只清那一种
 					.then(Commands.literal("clear")
 							.requires(ModCommands::isAdmin)
-							.executes(context -> clear(context.getSource())))
+							.executes(context -> clear(context.getSource(), null))
+							.then(Commands.literal("normal")
+									.executes(context -> clear(context.getSource(), DustbinKind.NORMAL)))
+							.then(Commands.literal("kitchen")
+									.executes(context -> clear(context.getSource(), DustbinKind.KITCHEN)))
+							.then(Commands.literal("tool")
+									.executes(context -> clear(context.getSource(), DustbinKind.TOOL))))
+					// 进桶时间三类共用，语义与 1.0.0 一致
 					.then(Commands.literal("settime")
 							.requires(ModCommands::isAdmin)
 							.then(Commands.argument("minutes", IntegerArgumentType.integer(
@@ -53,11 +65,17 @@ public class ModCommands {
 		});
 	}
 
-	private static int clear(CommandSourceStack source) {
+	/** @param kind 为 null 时清空全部三种桶 */
+	private static int clear(CommandSourceStack source, @Nullable DustbinKind kind) {
 		ServerLevel level = source.getLevel();
 		DustbinStorage storage = DustbinStorage.get(level);
-		int cleared = storage.clearAll();
-		source.sendSuccess(() -> Component.translatable("commands.dustbin.cleared", cleared), true);
+		int cleared = kind == null ? storage.clearAll() : storage.clearAll(kind);
+		if (kind == null) {
+			source.sendSuccess(() -> Component.translatable("commands.dustbin.cleared", cleared), true);
+		} else {
+			source.sendSuccess(() -> Component.translatable("commands.dustbin.cleared_kind",
+					Component.translatable(kind.blockTranslationKey()), cleared), true);
+		}
 		return cleared;
 	}
 

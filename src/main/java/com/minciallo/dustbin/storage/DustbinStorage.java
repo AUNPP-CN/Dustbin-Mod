@@ -11,11 +11,21 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
 
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Global, per-world shared storage for the trash bin.
- * Holds the 54-slot inventory and the configurable collection threshold.
+ * 全局的、按维度共享的垃圾桶存储。
+ *
+ * <p>1.1.0 起改为<b>每种垃圾桶各持有一份 54 格库存</b>
+ * （{@link DustbinKind#NORMAL} / {@link DustbinKind#KITCHEN} / {@link DustbinKind#TOOL}），
+ * 进桶时间仍是一个全局值。
+ *
+ * <p><b>存档兼容性（关键）</b>：序列化字段 {@code items} 继续表示<b>普通垃圾桶</b>的内容，
+ * 1.1.0 只是新增了 {@code kitchen_items} 与 {@code tool_items} 两个<b>可选</b>字段。
+ * 因此用 1.0.0 存的档升到 1.1.0 后，普通桶里的东西一个都不会丢 —— 读取时缺失的新字段
+ * 会补成空列表。
  */
 public class DustbinStorage extends SavedData {
 	public static final String NAME = "dustbin_storage";
@@ -23,13 +33,22 @@ public class DustbinStorage extends SavedData {
 	public static final int MIN_COLLECTION_TICKS = 1 * 60 * 20; // 1 minute
 	public static final int MAX_COLLECTION_TICKS = 1440 * 60 * 20; // 1 day (1440 minutes)
 
-	private final DustbinInventory inventory = new DustbinInventory();
+	private final Map<DustbinKind, DustbinInventory> inventories = new EnumMap<>(DustbinKind.class);
 	private int collectionTicks = DEFAULT_COLLECTION_TICKS;
 
+	private static List<ItemStack> itemsOf(DustbinStorage storage, DustbinKind kind) {
+		return storage.getInventory(kind).getItems();
+	}
+
 	private static final Codec<DustbinStorage> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			ItemStack.OPTIONAL_CODEC.listOf().fieldOf("items").forGetter(storage -> storage.inventory.getItems()),
+			ItemStack.OPTIONAL_CODEC.listOf().optionalFieldOf("items", List.<ItemStack>of())
+					.forGetter(storage -> itemsOf(storage, DustbinKind.NORMAL)),
 			Codec.INT.optionalFieldOf("collection_ticks", DEFAULT_COLLECTION_TICKS)
-					.forGetter(storage -> storage.collectionTicks)
+					.forGetter(DustbinStorage::getCollectionTicks),
+			ItemStack.OPTIONAL_CODEC.listOf().optionalFieldOf("kitchen_items", List.<ItemStack>of())
+					.forGetter(storage -> itemsOf(storage, DustbinKind.KITCHEN)),
+			ItemStack.OPTIONAL_CODEC.listOf().optionalFieldOf("tool_items", List.<ItemStack>of())
+					.forGetter(storage -> itemsOf(storage, DustbinKind.TOOL))
 	).apply(instance, DustbinStorage::fromData));
 
 	public static final SavedDataType<DustbinStorage> TYPE = new SavedDataType<>(
@@ -42,43 +61,62 @@ public class DustbinStorage extends SavedData {
 	public DustbinStorage() {
 	}
 
-	private static DustbinStorage fromData(List<ItemStack> items, int collectionTicks) {
+	private static DustbinStorage fromData(List<ItemStack> items, int collectionTicks,
+			List<ItemStack> kitchenItems, List<ItemStack> toolItems) {
 		DustbinStorage storage = new DustbinStorage();
-		for (int i = 0; i < items.size() && i < DustbinInventory.SLOT_COUNT; i++) {
-			storage.inventory.setItem(i, items.get(i));
-		}
+		fill(storage.getInventory(DustbinKind.NORMAL), items);
+		fill(storage.getInventory(DustbinKind.KITCHEN), kitchenItems);
+		fill(storage.getInventory(DustbinKind.TOOL), toolItems);
 		storage.collectionTicks = collectionTicks;
 		return storage;
+	}
+
+	private static void fill(DustbinInventory inventory, List<ItemStack> items) {
+		for (int i = 0; i < items.size() && i < DustbinInventory.SLOT_COUNT; i++) {
+			inventory.setItem(i, items.get(i));
+		}
 	}
 
 	public static DustbinStorage get(ServerLevel level) {
 		return level.getDataStorage().computeIfAbsent(TYPE);
 	}
 
-	public DustbinInventory getInventory() {
-		return inventory;
+	/** 指定种类的库存。首次访问时按需创建。 */
+	public DustbinInventory getInventory(DustbinKind kind) {
+		return inventories.computeIfAbsent(kind, ignored -> new DustbinInventory());
 	}
 
 	public int getCollectionTicks() {
 		return collectionTicks;
 	}
 
+	/**
+	 * 进桶时间。<b>三种桶共用一个值</b>（1.1.0 的决定），
+	 * 因此 {@code /dustbin settime} 的语义与 1.0.0 完全一致。
+	 */
 	public void setCollectionTicks(int ticks) {
 		this.collectionTicks = ticks;
 		setDirty();
 	}
 
 	/**
-	 * Attempts to collect the dropped stack into the shared storage.
+	 * 尝试把掉落物收进<b>它所属种类</b>的桶里。
 	 *
 	 * <p>收集规则：每种物品只占用一个格子，每格按物品自身堆叠上限；超出上限的多余
 	 * 数量会被直接丢弃。仅当存在空位、或存在同种物品且未满的格子时才收集。
 	 *
-	 * @return true if the stack was collected (overflow discarded); false if there is
-	 *         no slot available for this item type (the item then uses vanilla despawn).
+	 * <p>分类桶装满时<b>不会降级</b>塞进普通桶（1.1.0 的决定）—— 保持分类纯净，
+	 * 该物品退回原版消失逻辑。
+	 *
+	 * @return true 表示已收集（多余部分被丢弃）；false 表示该种类的桶里没有该物品的容身之处，
+	 *         调用方应让物品走原版消失。
 	 */
 	public boolean tryCollect(ItemStack stack) {
-		if (stack.isEmpty() || !canCollect(stack)) {
+		if (stack.isEmpty()) {
+			return false;
+		}
+		DustbinInventory inventory = getInventory(DustbinClassifier.classify(stack));
+		if (!canCollect(inventory, stack)) {
 			return false;
 		}
 		inventory.addItem(stack.copy());
@@ -87,11 +125,10 @@ public class DustbinStorage extends SavedData {
 	}
 
 	/**
-	 * Whether the storage can accept this item type. Matches {@code DustbinInventory.addItem}
-	 * exactly: it can be collected if there is already a slot holding this same item type
-	 * (whether full or not — overflow is discarded) or any empty slot.
+	 * 该桶是否能接纳这个物品。判定与 {@code DustbinInventory.addItem} 完全一致：
+	 * 已存在同种物品的格子（无论满没满 —— 溢出的部分会被丢弃），或存在任意空位。
 	 */
-	private boolean canCollect(ItemStack stack) {
+	private static boolean canCollect(DustbinInventory inventory, ItemStack stack) {
 		for (int i = 0; i < inventory.getContainerSize(); i++) {
 			ItemStack slot = inventory.getItem(i);
 			if (slot.isEmpty()) {
@@ -104,16 +141,28 @@ public class DustbinStorage extends SavedData {
 		return false;
 	}
 
-	/** Counts and clears all stored items. Returns the number of stacks removed. */
+	/** 清空全部三种桶，返回移除的组数。 */
 	public int clearAll() {
+		int count = 0;
+		for (DustbinKind kind : DustbinKind.values()) {
+			count += clearAll(kind);
+		}
+		return count;
+	}
+
+	/** 清空指定种类的桶，返回移除的组数。 */
+	public int clearAll(DustbinKind kind) {
+		DustbinInventory inventory = getInventory(kind);
 		int count = 0;
 		for (int i = 0; i < inventory.getContainerSize(); i++) {
 			if (!inventory.getItem(i).isEmpty()) {
 				count++;
 			}
 		}
-		inventory.clearContent();
-		setDirty();
+		if (count > 0) {
+			inventory.clearContent();
+			setDirty();
+		}
 		return count;
 	}
 }

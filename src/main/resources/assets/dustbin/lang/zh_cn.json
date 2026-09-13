@@ -1,7 +1,14 @@
 {
-  "block.dustbin.dustbin": "垃圾桶",
-  "item.dustbin.dustbin": "垃圾桶",
-  "container.dustbin.dustbin": "垃圾桶",
+  "block.dustbin.dustbin": "其他垃圾桶",
+  "item.dustbin.dustbin": "其他垃圾桶",
+  "container.dustbin.dustbin": "其他垃圾桶",
   "commands.dustbin.cleared": "已从垃圾桶中清空 %s 组物品。",
-  "commands.dustbin.settime": "掉落物将在 %s 分钟后进入垃圾桶。"
+  "commands.dustbin.settime": "掉落物将在 %s 分钟后进入垃圾桶。",
+  "block.dustbin.kitchen_dustbin": "厨余垃圾桶",
+  "item.dustbin.kitchen_dustbin": "厨余垃圾桶",
+  "container.dustbin.kitchen_dustbin": "厨余垃圾桶",
+  "block.dustbin.tool_dustbin": "工具垃圾桶",
+  "item.dustbin.tool_dustbin": "工具垃圾桶",
+  "container.dustbin.tool_dustbin": "工具垃圾桶",
+  "commands.dustbin.cleared_kind": "已从%1$s中清空 %2$s 组物品。"
 }
