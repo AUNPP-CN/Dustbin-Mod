@@ -1,5 +1,7 @@
 # Dustbin-Mod
 
+![Dustbin](src/main/resources/assets/dustbin/icon.png)
+
 ![Minecraft](https://img.shields.io/badge/Minecraft-26.2-brightgreen)
 
 ![Loaders](https://img.shields.io/badge/Loaders-Fabric-blue)
