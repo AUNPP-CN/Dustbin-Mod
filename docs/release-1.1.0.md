@@ -154,9 +154,9 @@ Please verify the checksum after downloading.
 
 ```
 文件 / File : dustbin-fabric-1.1.0.jar
-大小 / Size : 259,656 bytes
-MD5         : af6dd31387bc19bae0fcb9784d5fb681
-SHA-256     : 971a7938a0af1d4cfc8a4ed8a36289424289bcdb64d15689758efb225f012875
+大小 / Size : 252,783 bytes
+MD5         : 718b50084fb1868d6705bd9a63607a0e
+SHA-256     : be72dfc3ad92411a15a80e6dbd62a88d837d13367b1bd9c7ae2701f2ee673642
 ```
 
 ---
