@@ -57,6 +57,11 @@ The mod id is `dustbin` and **stays the same across loaders**; only the artifact
 | **装备垃圾桶 / Equipment Bin** | 工具、武器、护甲。Tools, weapons and armour. | 铁镐 / Iron Pickaxe |
 | **矿物垃圾桶 / Mineral Bin** | 矿石、原矿、锭、宝石、矿物块。Ores, raw materials, ingots, gems and mineral blocks. | 铁块 / Iron Block |
 
+![四类垃圾桶 / The four bins](docs/bins-preview.png)
+
+> 从左到右：其他（灰 · 回收标志）/ 厨余（绿 · 腐肉）/ 装备（钢蓝 · 铁镐）/ 矿物（铜橙 · 钻石）。
+> Left to right: Other (grey · recycle mark), Kitchen (green · rotten flesh), Equipment (steel blue · iron pickaxe), Mineral (copper orange · diamond).
+
 判定顺序是 **装备 → 厨余 → 矿物 → 其他**，第一个匹配的生效（所以一把铁镐进装备桶、铁锭进矿物桶，都不会落到其他桶）。
 
 The order is **equipment → kitchen → minerals → everything else**, and the first match wins (so an iron pickaxe goes to the Equipment Bin and an iron ingot to the Mineral Bin — neither lands in the Other Bin).
