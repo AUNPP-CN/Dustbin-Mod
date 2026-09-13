@@ -113,10 +113,12 @@
 
 | 桶 | 桶身平均色 | 说明 |
 | --- | --- | --- |
-| 其他垃圾桶 | `#3c4738` 灰绿 | 1.0.0 原版 |
-| 厨余垃圾桶 | `#738e51` 苹果绿 | 玩家手绘原色 |
-| 装备垃圾桶 | `#4e6c8e` 钢蓝 | 手绘同构图，色相 212° |
-| 矿物垃圾桶 | `#8e634a` 铜橙 | 手绘同构图，色相 22° |
+| 其他垃圾桶 | 中性灰（绿基准去饱和） | 手绘同构图，饱和度归零；侧面盖灰化回收标志 |
+| 厨余垃圾桶 | `#738e51` 苹果绿 | 玩家手绘原色；侧面盖原版熟牛排贴图（5x） |
+| 装备垃圾桶 | 钢蓝 | 手绘同构图，色相 212°；侧面盖原版铁镐贴图（5x） |
+| 矿物垃圾桶 | 铜橙 | 手绘同构图，色相 22°；侧面盖原版钻石贴图（5x） |
+
+四个桶的侧面区分图案都取自**原版素材**（物品贴图与回收标志），颜色不随桶身色相漂移。
 
 ---
 
@@ -149,10 +151,11 @@
 
 | 用途 | 路径 |
 | --- | --- |
-| 正式美术参考（1.0.0 画的） | `assets/dustbin/textures/block/dustbin_*.png` |
+| 四桶正式贴图生成脚本（本套正式贴图就是它产的） | `.workbuddy/scripts/design_new_bin_textures.py` |
+| 回收标志素材（已灰化，供其他桶侧面盖章） | `.workbuddy/assets/recycle-logo.png` |
+| 原版物品图标素材（牛排/铁镐/钻石，客户端 jar 抽取） | `.workbuddy/assets/mc-items/` |
+| 回收标志放大脚本（一次性，已并入上述管线） | `.workbuddy/scripts/rescale_dustbin_logo.py` |
 | 厨余桶手绘原图（4 张参考） | `贴图/`（仓库外，未提交） |
-| 三桶贴图生成脚本（本套正式贴图就是它产的） | `.workbuddy/scripts/design_new_bin_textures.py` |
-| 旧占位图脚本（已被取代，留作备用） | `.workbuddy/scripts/gen_mineral_bin.py` |
 | 桶身模型（世界中的方块） | `assets/dustbin/models/block/<前缀>_body.json` |
 | 完整模型（物品栏图标，含盖子） | `assets/dustbin/models/block/<前缀>.json` |
 | 盖子渲染代码（世界里的开盖动画） | `src/client/java/.../render/DustbinBlockEntityRenderer.java` |
