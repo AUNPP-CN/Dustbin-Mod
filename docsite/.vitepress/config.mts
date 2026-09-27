@@ -25,7 +25,8 @@ export default defineConfig({
           items: [
             { text: '快速开始', link: '/guide/getting-started' },
             { text: '四类垃圾桶与分类规则', link: '/guide/bins' },
-            { text: '配置与命令', link: '/guide/commands' }
+            { text: '配置与命令', link: '/guide/commands' },
+            { text: '数据包扩展', link: '/guide/datapack' }
           ]
         }
       ],
