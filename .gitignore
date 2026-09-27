@@ -47,3 +47,8 @@ replay_*.log
 # AI-generated source images (superseded by the procedural textures; kept locally only)
 
 generated-images/
+
+# docsite (VitePress)
+docsite/node_modules/
+docsite/.vitepress/cache/
+docsite/.vitepress/dist/
